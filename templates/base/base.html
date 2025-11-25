@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SafeHer - Your Safety Companion{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%); }
+        .safe-glow { box-shadow: 0 0 30px rgba(236, 72, 153, 0.2); }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        body { background: #ffffff; }
+        @media (max-width: 640px) {
+            .container { max-width: 100%; padding: 0 0.5rem; }
+            html { font-size: 14px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Mobile-Friendly Header -->
+    <nav class="bg-white/90 backdrop-blur-sm border-b border-pink-100 sticky top-0 z-50 shadow-sm">
+        <div class="flex justify-between items-center py-2 sm:py-3 px-3 sm:px-6">
+            <div class="flex items-center space-x-2">
+                <img src="/media/logo.jpg" alt="SafeHer Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl object-cover">
+                <h1 class="text-lg sm:text-2xl font-bold text-black">SafeHer</h1>
+            </div>
+            <div class="flex space-x-1 sm:space-x-2">
+                <a href="/report/" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full hover:shadow-lg transition-all font-medium text-sm sm:text-sm">
+                    <i class="fas fa-video mr-1"></i><span class="hidden sm:inline">Report</span>
+                </a>
+                <a href="/sos/" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full hover:shadow-lg transition-all animate-pulse font-medium text-sm sm:text-sm">
+                    <i class="fas fa-exclamation-triangle mr-1"></i><span class="hidden sm:inline">SOS</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Empowering Quote -->
+    <div class="text-center py-8">
+        <p class="text-xl text-gray-700 font-medium italic">"You are braver than you believe, stronger than you seem, and more loved than you know."</p>
+        <p class="text-pink-600 mt-3 font-semibold">🌸 Stay Safe, Stay Strong, Stay Beautiful</p>
+    </div>
+    
+    <main class="w-full max-w-7xl mx-auto p-2 sm:p-4">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Modern Footer -->
+    <footer class="bg-gradient-to-r from-pink-50 to-rose-50 mt-16 p-8 border-t border-pink-200">
+        <div class="container mx-auto">
+            <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-lightbulb text-pink-500 mr-3"></i>Safety Tips for Every Woman
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <i class="fas fa-users text-3xl text-pink-500 mb-3"></i>
+                        <h4 class="font-bold text-gray-800 mb-2">Stay Connected</h4>
+                        <p class="text-gray-600 text-sm">Always stay in crowded, well-lit areas</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <i class="fas fa-phone text-3xl text-rose-500 mb-3"></i>
+                        <h4 class="font-bold text-gray-800 mb-2">Emergency Ready</h4>
+                        <p class="text-gray-600 text-sm">Keep emergency contacts easily accessible</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-lg">
+                        <i class="fas fa-heart text-3xl text-pink-400 mb-3"></i>
+                        <h4 class="font-bold text-gray-800 mb-2">Trust Yourself</h4>
+                        <p class="text-gray-600 text-sm">Your instincts are your best protection</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center border-t border-pink-200 pt-6">
+                <p class="text-gray-600">© 2025 SafeHer - Empowering Women's Safety</p>
+                <p class="text-pink-600 font-medium mt-2">🌸 Made with love for every woman's safety</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

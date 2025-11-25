@@ -1,0 +1,353 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent mb-2">
+            SafeHer Community & Safety Map
+        </h2>
+        <p class="text-green-600">"Together we're stronger, together we're safer"</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <button id="find-buddy" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-6 rounded-2xl hover:shadow-xl transition-all">
+            <i class="fas fa-user-friends text-3xl mb-3"></i>
+            <h3 class="font-bold">Find Safety Buddy</h3>
+            <p class="text-sm opacity-90">Connect with nearby women</p>
+        </button>
+        
+        <button id="safe-routes" class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white p-6 rounded-2xl hover:shadow-xl transition-all">
+            <i class="fas fa-route text-3xl mb-3"></i>
+            <h3 class="font-bold">Safe Routes</h3>
+            <p class="text-sm opacity-90">Get safest path suggestions</p>
+        </button>
+        
+        <button id="anonymous-tip" class="bg-gradient-to-r from-purple-500 to-violet-500 text-white p-6 rounded-2xl hover:shadow-xl transition-all">
+            <i class="fas fa-eye-slash text-3xl mb-3"></i>
+            <h3 class="font-bold">Anonymous Tip</h3>
+            <p class="text-sm opacity-90">Report suspicious activity</p>
+        </button>
+    </div>
+    
+    <!-- Safety Buddy Results -->
+    <div id="buddy-results" class="bg-white rounded-2xl p-6 shadow-lg mb-6 hidden">
+        <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+            <i class="fas fa-users mr-2 text-pink-500"></i>Available Safety Buddies
+        </h3>
+        <div id="buddies-list"></div>
+    </div>
+    
+    <!-- Safety Groups -->
+    <div id="safety-groups" class="bg-white rounded-2xl p-6 shadow-lg mb-6 hidden">
+        <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+            <i class="fas fa-shield-alt mr-2 text-green-500"></i>Safety Groups Near You
+        </h3>
+        <div id="groups-list"></div>
+        <button id="create-group" class="w-full bg-green-500 text-white py-3 rounded-lg font-bold mt-4">
+            <i class="fas fa-plus mr-2"></i>Create New Safety Group
+        </button>
+    </div>
+    
+    <!-- Live Location Sharing -->
+    <div id="location-sharing" class="bg-white rounded-2xl p-6 shadow-lg mb-6 hidden">
+        <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+            <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>Live Location Sharing
+        </h3>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <span class="text-blue-700">Share location with buddies</span>
+                <button id="toggle-sharing" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                    <i class="fas fa-play mr-1"></i>Start Sharing
+                </button>
+            </div>
+            <div id="shared-locations"></div>
+        </div>
+    </div>
+    
+    <!-- Emergency Contacts -->
+    <div id="emergency-contacts" class="bg-white rounded-2xl p-6 shadow-lg mb-6 hidden">
+        <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+            <i class="fas fa-phone-alt mr-2 text-red-500"></i>Emergency Contact Network
+        </h3>
+        <div id="contacts-list"></div>
+        <button id="add-contact" class="w-full bg-red-500 text-white py-3 rounded-lg font-bold mt-4">
+            <i class="fas fa-user-plus mr-2"></i>Add Emergency Contact
+        </button>
+    </div>
+    
+    <div id="tip-form" class="bg-white rounded-2xl p-6 shadow-lg hidden">
+        <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+            <i class="fas fa-comment-dots mr-2 text-purple-500"></i>Submit Anonymous Tip
+        </h3>
+        <textarea id="tip-description" placeholder="Describe suspicious activity..." class="w-full p-3 border rounded-lg mb-4" rows="3"></textarea>
+        <select id="tip-type" class="w-full p-3 border rounded-lg mb-4">
+            <option value="harassment">Harassment</option>
+            <option value="stalking">Stalking</option>
+            <option value="suspicious">Suspicious Activity</option>
+            <option value="unsafe_area">Unsafe Area</option>
+        </select>
+        <button id="submit-tip" class="w-full bg-purple-500 text-white py-3 rounded-lg font-bold">Submit Tip</button>
+    </div>
+</div>
+
+<script>
+let currentLocation = null;
+
+navigator.geolocation.getCurrentPosition(position => {
+    currentLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+    };
+});
+
+// Safety Buddy System
+let isLocationSharing = false;
+let sharingInterval = null;
+let safetyBuddies = JSON.parse(localStorage.getItem('safetyBuddies')) || [];
+let emergencyContacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+let safetyGroups = JSON.parse(localStorage.getItem('safetyGroups')) || [];
+
+document.getElementById('find-buddy').onclick = () => {
+    showNearbyBuddies();
+    showSafetyGroups();
+    showLocationSharing();
+    showEmergencyContacts();
+};
+
+function showNearbyBuddies() {
+    const buddyDiv = document.getElementById('buddy-results');
+    const buddiesList = document.getElementById('buddies-list');
+    
+    buddyDiv.classList.remove('hidden');
+    
+    // Mock nearby buddies with real functionality
+    const nearbyBuddies = [
+        { name: 'Sarah K.', distance: 0.5, rating: 4.8, status: 'online', phone: '9876543210' },
+        { name: 'Priya M.', distance: 0.8, rating: 4.9, status: 'online', phone: '9876543211' },
+        { name: 'Emma L.', distance: 1.2, rating: 4.7, status: 'away', phone: '9876543212' },
+        { name: 'Anita S.', distance: 1.5, rating: 4.6, status: 'online', phone: '9876543213' }
+    ];
+    
+    buddiesList.innerHTML = nearbyBuddies.map(buddy => `
+        <div class="flex justify-between items-center p-4 bg-pink-50 rounded-xl mb-3 border border-pink-200">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 ${buddy.status === 'online' ? 'bg-green-500' : 'bg-gray-400'} rounded-full border-2 border-white"></div>
+                </div>
+                <div>
+                    <p class="font-bold text-pink-700">${buddy.name}</p>
+                    <p class="text-sm text-pink-600">${buddy.distance}km away • ${buddy.status}</p>
+                </div>
+            </div>
+            <div class="text-right space-y-2">
+                <div class="text-yellow-500 text-sm">⭐ ${buddy.rating}</div>
+                <div class="space-x-2">
+                    <button onclick="connectBuddy('${buddy.name}', '${buddy.phone}')" class="bg-pink-500 text-white px-3 py-1 rounded-full text-sm hover:bg-pink-600">
+                        <i class="fas fa-user-plus mr-1"></i>Connect
+                    </button>
+                    <button onclick="callBuddy('${buddy.phone}')" class="bg-green-500 text-white px-3 py-1 rounded-full text-sm hover:bg-green-600">
+                        <i class="fas fa-phone mr-1"></i>Call
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showSafetyGroups() {
+    const groupsDiv = document.getElementById('safety-groups');
+    const groupsList = document.getElementById('groups-list');
+    
+    groupsDiv.classList.remove('hidden');
+    
+    const groups = [
+        { name: 'Evening Walkers', members: 12, route: 'Park to Mall', time: '6:00 PM' },
+        { name: 'Morning Joggers', members: 8, route: 'Beach Road', time: '6:00 AM' },
+        { name: 'Office Commuters', members: 15, route: 'Metro Station', time: '9:00 AM' }
+    ];
+    
+    groupsList.innerHTML = groups.map(group => `
+        <div class="p-4 bg-green-50 rounded-xl mb-3 border border-green-200">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h4 class="font-bold text-green-700">${group.name}</h4>
+                    <p class="text-sm text-green-600">${group.members} members • ${group.route}</p>
+                    <p class="text-xs text-green-500">Daily at ${group.time}</p>
+                </div>
+                <button onclick="joinGroup('${group.name}')" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                    <i class="fas fa-users mr-1"></i>Join
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function showLocationSharing() {
+    document.getElementById('location-sharing').classList.remove('hidden');
+}
+
+function showEmergencyContacts() {
+    const contactsDiv = document.getElementById('emergency-contacts');
+    const contactsList = document.getElementById('contacts-list');
+    
+    contactsDiv.classList.remove('hidden');
+    
+    if (emergencyContacts.length === 0) {
+        contactsList.innerHTML = '<p class="text-gray-500 text-center py-4">No emergency contacts added yet</p>';
+    } else {
+        contactsList.innerHTML = emergencyContacts.map((contact, index) => `
+            <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg mb-2">
+                <div>
+                    <p class="font-bold text-red-700">${contact.name}</p>
+                    <p class="text-sm text-red-600">${contact.phone} • ${contact.relation}</p>
+                </div>
+                <div class="space-x-2">
+                    <button onclick="callContact('${contact.phone}')" class="bg-red-500 text-white px-3 py-1 rounded-full text-sm">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button onclick="removeContact(${index})" class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+// Buddy Functions
+function connectBuddy(name, phone) {
+    const buddy = { name, phone, connected: new Date().toISOString() };
+    safetyBuddies.push(buddy);
+    localStorage.setItem('safetyBuddies', JSON.stringify(safetyBuddies));
+    
+    alert(`Connected with ${name}! You can now share locations and send emergency alerts.`);
+    
+    // Send connection SMS
+    const message = `Hi! I've added you as my Safety Buddy on SafeHer app. We can now share locations for safety. Stay safe! 💜`;
+    window.open(`sms:${phone}?body=${encodeURIComponent(message)}`);
+}
+
+function callBuddy(phone) {
+    window.open(`tel:${phone}`);
+}
+
+function joinGroup(groupName) {
+    alert(`Joined ${groupName}! You'll receive notifications about group activities.`);
+    
+    // Add to user's groups
+    if (!safetyGroups.includes(groupName)) {
+        safetyGroups.push(groupName);
+        localStorage.setItem('safetyGroups', JSON.stringify(safetyGroups));
+    }
+}
+
+// Location Sharing
+document.getElementById('toggle-sharing').onclick = () => {
+    const button = document.getElementById('toggle-sharing');
+    const sharedDiv = document.getElementById('shared-locations');
+    
+    if (!isLocationSharing) {
+        startLocationSharing();
+        button.innerHTML = '<i class="fas fa-stop mr-1"></i>Stop Sharing';
+        button.classList.remove('bg-blue-500');
+        button.classList.add('bg-red-500');
+        isLocationSharing = true;
+        
+        sharedDiv.innerHTML = `
+            <div class="p-3 bg-blue-100 rounded-lg">
+                <p class="text-blue-700 font-medium">📍 Sharing live location with safety buddies</p>
+                <p class="text-blue-600 text-sm">Updated every 30 seconds</p>
+            </div>
+        `;
+    } else {
+        stopLocationSharing();
+        button.innerHTML = '<i class="fas fa-play mr-1"></i>Start Sharing';
+        button.classList.remove('bg-red-500');
+        button.classList.add('bg-blue-500');
+        isLocationSharing = false;
+        
+        sharedDiv.innerHTML = '<p class="text-gray-500 text-center py-2">Location sharing stopped</p>';
+    }
+};
+
+function startLocationSharing() {
+    if (navigator.geolocation) {
+        sharingInterval = setInterval(() => {
+            navigator.geolocation.getCurrentPosition(position => {
+                const location = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                
+                // Send location to all safety buddies
+                safetyBuddies.forEach(buddy => {
+                    const message = `SafeHer Location Update: https://maps.google.com/?q=${location.lat},${location.lng} - ${location.timestamp}`;
+                    // In real app, this would use push notifications or websockets
+                    console.log(`Location sent to ${buddy.name}: ${message}`);
+                });
+            });
+        }, 30000); // Every 30 seconds
+    }
+}
+
+function stopLocationSharing() {
+    if (sharingInterval) {
+        clearInterval(sharingInterval);
+        sharingInterval = null;
+    }
+}
+
+// Emergency Contacts
+document.getElementById('add-contact').onclick = () => {
+    const name = prompt('Enter contact name:');
+    const phone = prompt('Enter phone number:');
+    const relation = prompt('Relationship (e.g., Mother, Sister, Friend):');
+    
+    if (name && phone && relation) {
+        const contact = { name, phone, relation };
+        emergencyContacts.push(contact);
+        localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
+        showEmergencyContacts();
+        alert('Emergency contact added successfully!');
+    }
+};
+
+function callContact(phone) {
+    window.open(`tel:${phone}`);
+}
+
+function removeContact(index) {
+    if (confirm('Remove this emergency contact?')) {
+        emergencyContacts.splice(index, 1);
+        localStorage.setItem('emergencyContacts', JSON.stringify(emergencyContacts));
+        showEmergencyContacts();
+    }
+}
+
+// Create Group
+document.getElementById('create-group').onclick = () => {
+    const groupName = prompt('Enter group name:');
+    const route = prompt('Enter route/area:');
+    const time = prompt('Enter meeting time:');
+    
+    if (groupName && route && time) {
+        alert(`Safety group "${groupName}" created! Other women in the area will be notified.`);
+        safetyGroups.push(groupName);
+        localStorage.setItem('safetyGroups', JSON.stringify(safetyGroups));
+    }
+};
+
+document.getElementById('anonymous-tip').onclick = () => {
+    document.getElementById('tip-form').classList.remove('hidden');
+};
+
+document.getElementById('submit-tip').onclick = () => {
+    alert('Tip submitted successfully!');
+    document.getElementById('tip-form').classList.add('hidden');
+};
+</script>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<!-- Hero Section - Fully Responsive -->
+<div class="relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-rose-50 rounded-xl sm:rounded-2xl lg:rounded-3xl mb-6 sm:mb-8 lg:mb-12 p-4 sm:p-6 lg:p-12">
+    <div class="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-pink-200 rounded-full opacity-20 -translate-y-16 translate-x-16 sm:-translate-y-24 sm:translate-x-24 lg:-translate-y-32 lg:translate-x-32"></div>
+    <div class="absolute bottom-0 left-0 w-24 h-24 sm:w-36 sm:h-36 lg:w-48 lg:h-48 bg-rose-200 rounded-full opacity-20 translate-y-12 -translate-x-12 sm:translate-y-18 sm:-translate-x-18 lg:translate-y-24 lg:-translate-x-24"></div>
+    
+    <div class="relative text-center">
+        <div class="floating mb-4 sm:mb-6 lg:mb-8">
+            <img src="https://cdn-icons-png.flaticon.com/512/4825/4825112.png" alt="Women Girl Safety Protection" class="w-20 h-20 sm:w-28 sm:h-28 lg:w-40 lg:h-40 mx-auto">
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-pink-500 via-rose-400 to-pink-600 bg-clip-text text-transparent mb-3 sm:mb-4 lg:mb-6">
+            SafeHer
+        </h1>
+        <p class="text-lg sm:text-xl lg:text-2xl text-gray-700 mb-2 sm:mb-3 lg:mb-4 font-light px-4">Your Personal Safety Companion</p>
+        <p class="text-sm sm:text-base lg:text-lg text-pink-600 italic font-medium px-4">"Every woman deserves to feel safe and protected"</p>
+        
+        <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 mt-4 sm:mt-6 lg:mt-8 px-4">
+            <div class="bg-white/80 backdrop-blur-sm px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg flex items-center space-x-2 w-full sm:w-auto justify-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/1161/1161388.png" alt="Protection" class="w-4 h-4 sm:w-5 sm:h-5">
+                <span class="text-pink-600 font-semibold text-sm sm:text-base">24/7 Protection</span>
+            </div>
+            <div class="bg-white/80 backdrop-blur-sm px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg flex items-center space-x-2 w-full sm:w-auto justify-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/681/681494.png" alt="Community" class="w-4 h-4 sm:w-5 sm:h-5">
+                <span class="text-pink-600 font-semibold text-sm sm:text-base">Community Support</span>
+            </div>
+        </div>
+        
+        <!-- Emergency Number Setting -->
+        <div class="mt-6 sm:mt-8">
+            <button id="set-number-btn" class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+                <i class="fas fa-phone-alt mr-2"></i>Set Emergency Number
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Main Action Cards - Fully Responsive -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto mb-8 sm:mb-12 lg:mb-16 px-4">
+    <!-- Report Card -->
+    <div class="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 border border-pink-100">
+        <div class="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-rose-500/5 rounded-2xl sm:rounded-3xl"></div>
+        <div class="relative text-center">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-pink-400 to-rose-500 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 lg:mb-6 group-hover:scale-110 transition-transform">
+                <i class="fas fa-video text-lg sm:text-xl lg:text-2xl text-white"></i>
+            </div>
+            <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-2 sm:mb-3 lg:mb-4">Report Incident</h3>
+            <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-5 lg:mb-6 leading-relaxed">Record evidence and alert authorities with one tap</p>
+            <a href="/report/" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-xl sm:rounded-2xl font-semibold hover:shadow-lg transition-all inline-block group-hover:from-pink-600 group-hover:to-rose-600 text-sm sm:text-base">
+                <i class="fas fa-camera mr-1 sm:mr-2"></i>Start Recording
+            </a>
+        </div>
+    </div>
+    
+    <!-- SOS Card -->
+    <div class="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 border border-red-100 sm:col-span-2 lg:col-span-1">
+        <div class="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 rounded-2xl sm:rounded-3xl"></div>
+        <div class="relative text-center">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-red-400 to-red-500 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 lg:mb-6 group-hover:scale-110 transition-transform animate-pulse">
+                <i class="fas fa-exclamation-triangle text-lg sm:text-xl lg:text-2xl text-white"></i>
+            </div>
+            <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-2 sm:mb-3 lg:mb-4">Emergency SOS</h3>
+            <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-5 lg:mb-6 leading-relaxed">Instant emergency alert with live location tracking</p>
+            <a href="/sos/" class="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 sm:px-6 sm:py-3 lg:px-8 lg:py-4 rounded-xl sm:rounded-2xl font-semibold hover:shadow-lg transition-all inline-block group-hover:from-red-600 group-hover:to-red-700 text-sm sm:text-base">
+                <i class="fas fa-shield-alt mr-1 sm:mr-2"></i>Emergency Help
+            </a>
+        </div>
+    </div>
+    
+
+</div>
+
+<!-- Empowering Quotes Section - Fully Responsive -->
+<div class="bg-gradient-to-r from-pink-50 to-rose-50 rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-12 mb-8 sm:mb-12 lg:mb-16 border border-pink-200 mx-4">
+    <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-6 sm:mb-8 lg:mb-10">
+        <i class="fas fa-heart text-pink-500 mr-2 sm:mr-3"></i>Words of Empowerment
+    </h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div class="text-center p-4 sm:p-5 lg:p-6 bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <i class="fas fa-crown text-base sm:text-lg lg:text-xl text-white"></i>
+            </div>
+            <p class="text-gray-700 font-medium text-sm sm:text-base lg:text-lg italic">"She believed she could, so she did."</p>
+        </div>
+        <div class="text-center p-4 sm:p-5 lg:p-6 bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <i class="fas fa-hands-helping text-base sm:text-lg lg:text-xl text-white"></i>
+            </div>
+            <p class="text-gray-700 font-medium text-sm sm:text-base lg:text-lg italic">"Strong women lift each other up."</p>
+        </div>
+        <div class="text-center p-4 sm:p-5 lg:p-6 bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all sm:col-span-2 lg:col-span-1">
+            <div class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-gradient-to-br from-pink-500 to-rose-400 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <i class="fas fa-star text-base sm:text-lg lg:text-xl text-white"></i>
+            </div>
+            <p class="text-gray-700 font-medium text-sm sm:text-base lg:text-lg italic">"You are your own superhero."</p>
+        </div>
+    </div>
+</div>
+
+<!-- Safety Features - Fully Responsive -->
+<div class="bg-white rounded-xl sm:rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-12 shadow-xl border border-pink-100 mx-4">
+    <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-6 sm:mb-8 lg:mb-12">
+        <i class="fas fa-shield-check text-pink-500 mr-2 sm:mr-3"></i>Your Safety Arsenal
+    </h3>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        <div class="text-center group">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                <i class="fas fa-map-marker-alt text-xl sm:text-2xl lg:text-3xl text-white"></i>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm sm:text-base lg:text-lg mb-1 sm:mb-2">Live Location</h4>
+            <p class="text-gray-600 text-xs sm:text-sm lg:text-base">Real-time GPS tracking for instant help</p>
+        </div>
+        <div class="text-center group">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-rose-400 to-pink-500 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                <i class="fas fa-video text-xl sm:text-2xl lg:text-3xl text-white"></i>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm sm:text-base lg:text-lg mb-1 sm:mb-2">Video Evidence</h4>
+            <p class="text-gray-600 text-xs sm:text-sm lg:text-base">Record and share incident proof</p>
+        </div>
+        <div class="text-center group">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-pink-500 to-rose-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                <i class="fab fa-whatsapp text-xl sm:text-2xl lg:text-3xl text-white"></i>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm sm:text-base lg:text-lg mb-1 sm:mb-2">WhatsApp Share</h4>
+            <p class="text-gray-600 text-xs sm:text-sm lg:text-base">Share evidence via WhatsApp</p>
+        </div>
+        <div class="text-center group">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-rose-500 to-pink-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                <i class="fas fa-phone-alt text-xl sm:text-2xl lg:text-3xl text-white"></i>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm sm:text-base lg:text-lg mb-1 sm:mb-2">Emergency Number</h4>
+            <p class="text-gray-600 text-xs sm:text-sm lg:text-base">Set custom emergency contact</p>
+        </div>
+    </div>
+    
+    <!-- Guide Button -->
+    <div class="text-center mt-8">
+        <a href="/guide/" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 inline-block">
+            <i class="fas fa-book-open mr-2"></i>How to Use SafeHer
+        </a>
+    </div>
+</div>
+
+<!-- Trust Indicators - Fully Responsive -->
+<div class="mt-8 sm:mt-12 lg:mt-16 text-center px-4">
+    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 lg:space-x-8 mb-4 sm:mb-6 lg:mb-8">
+        <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-gray-600 font-medium text-sm sm:text-base">24/7 Active</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-shield-alt text-pink-500 text-sm sm:text-base"></i>
+            <span class="text-gray-600 font-medium text-sm sm:text-base">Secure & Private</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-heart text-rose-500 text-sm sm:text-base"></i>
+            <span class="text-gray-600 font-medium text-sm sm:text-base">Made for Women</span>
+        </div>
+    </div>
+    <p class="text-gray-500 italic text-sm sm:text-base lg:text-lg px-4">"Your safety is our mission. Your confidence is our success."</p>
+</div>
+
+<!-- Phone Number Modal -->
+<div id="phone-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+            <i class="fas fa-phone text-blue-500 mr-2"></i>Set Emergency Number
+        </h3>
+        <div class="space-y-4">
+            <input type="tel" id="emergency-number" placeholder="Enter number (e.g., 911, 100, 9037612009)" 
+                   class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
+            <div class="flex space-x-3">
+                <button id="save-number" class="flex-1 bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600">
+                    <i class="fas fa-save mr-2"></i>Save
+                </button>
+                <button id="cancel-modal" class="flex-1 bg-gray-500 text-white py-3 rounded-lg font-bold hover:bg-gray-600">
+                    Cancel
+                </button>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <p class="text-sm text-gray-600">Current: <span id="current-number" class="font-bold text-blue-600">9037612009</span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Emergency number management
+let emergencyNumber = localStorage.getItem('emergencyNumber') || '9037612009';
+document.getElementById('current-number').textContent = emergencyNumber;
+
+document.getElementById('set-number-btn').onclick = () => {
+    document.getElementById('phone-modal').classList.remove('hidden');
+    document.getElementById('emergency-number').value = emergencyNumber;
+};
+
+document.getElementById('cancel-modal').onclick = () => {
+    document.getElementById('phone-modal').classList.add('hidden');
+};
+
+document.getElementById('save-number').onclick = () => {
+    const newNumber = document.getElementById('emergency-number').value.trim();
+    if (newNumber && (newNumber.length >= 3 && newNumber.length <= 15)) {
+        emergencyNumber = newNumber;
+        localStorage.setItem('emergencyNumber', emergencyNumber);
+        document.getElementById('current-number').textContent = emergencyNumber;
+        document.getElementById('phone-modal').classList.add('hidden');
+        alert('Emergency number updated successfully!');
+    } else {
+        alert('Please enter a valid number (3-15 digits)!');
+    }
+};
+
+// Make emergency number available globally
+window.getEmergencyNumber = () => emergencyNumber;
+</script>
+{% endblock %}

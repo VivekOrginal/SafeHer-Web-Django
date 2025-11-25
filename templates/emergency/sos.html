@@ -1,0 +1,264 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<!-- Emergency Hero -->
+<div class="text-center mb-8">
+    <div class="floating">
+        <i class="fas fa-hands-helping text-6xl text-red-400 mb-4"></i>
+    </div>
+    <h2 class="text-4xl font-bold bg-gradient-to-r from-red-500 to-pink-500 bg-clip-text text-transparent mb-2">
+        SafeHer Emergency SOS
+    </h2>
+    <p class="text-red-600 font-medium">"You are not alone. Help is just one tap away."</p>
+</div>
+
+<div class="max-w-lg mx-auto bg-white/95 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-red-100">
+    <!-- SOS Button Section -->
+    <div class="text-center space-y-8">
+        <div class="relative">
+            <div class="absolute inset-0 bg-red-400 rounded-full animate-ping opacity-20"></div>
+            <button id="sos-button" class="relative w-40 h-40 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-full text-5xl font-bold hover:from-red-600 hover:to-red-700 mx-auto block transition-all duration-200 shadow-2xl safe-glow">
+                SOS
+            </button>
+        </div>
+        
+        <div class="bg-gradient-to-r from-red-50 to-pink-50 p-4 rounded-2xl border border-red-200">
+            <p class="text-red-700 font-medium flex items-center justify-center space-x-2">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Instant location sharing with authorities</span>
+            </p>
+        </div>
+        
+        <div id="sos-status" class="text-center font-medium"></div>
+        
+        <!-- Empowerment Message -->
+        <div class="bg-gradient-to-r from-pink-100 to-rose-100 p-6 rounded-2xl border border-pink-200">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-heart text-pink-500 text-2xl"></i>
+                <div class="text-left">
+                    <p class="text-pink-700 font-bold">You are strong and brave!</p>
+                    <p class="text-sm text-pink-600">Every woman deserves to feel safe and protected.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let sosActive = false;
+let trackingInterval;
+
+document.getElementById('sos-button').onclick = () => {
+    if (sosActive) return;
+    
+    // Set volume to maximum
+    setVolumeToMax();
+    
+    // Play siren sound
+    playSiren();
+    
+    navigator.geolocation.getCurrentPosition(position => {
+        const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        };
+        
+        // Send automatic SMS with location
+        sendEmergencySMS(location);
+        
+        fetch('/api/trigger-sos/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(location)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                sosActive = true;
+                
+                // Visual feedback
+                const sosBtn = document.getElementById('sos-button');
+                sosBtn.classList.add('animate-pulse', 'bg-red-800');
+                sosBtn.innerHTML = '🚨';
+                
+                // Strong vibration pattern
+                if (navigator.vibrate) {
+                    // Long strong vibration pattern
+                    navigator.vibrate([500, 200, 500, 200, 500, 200, 1000, 300, 1000]);
+                    
+                    // Continue vibrating every 3 seconds
+                    const vibrateInterval = setInterval(() => {
+                        if (sosActive) {
+                            navigator.vibrate([300, 100, 300, 100, 300]);
+                        } else {
+                            clearInterval(vibrateInterval);
+                        }
+                    }, 3000);
+                }
+                
+                document.getElementById('sos-status').innerHTML = 
+                    `<div class="bg-red-100 border border-red-300 p-6 rounded-2xl"><div class="flex items-center justify-center space-x-3 text-red-700 mb-3"><i class="fas fa-shield-alt text-2xl"></i><div><p class="font-bold text-lg">SOS ACTIVATED</p><p class="text-sm">SMS sent with location! Help is coming!</p></div></div><p class="text-sm text-red-600">Share tracking: <a href="${data.tracking_url}" class="text-blue-600 underline">${data.tracking_url}</a></p></div>`;
+                
+                // Start live tracking
+                startLiveTracking(data.sos_id);
+            }
+        });
+    });
+};
+
+function sendEmergencySMS(location) {
+    // Get emergency number from localStorage or use default
+    const emergencyNumber = localStorage.getItem('emergencyNumber') || '9037612009';
+    
+    // Create Google Maps link
+    const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+    
+    // Create emergency SMS message
+    const message = `🚨 EMERGENCY SOS ALERT!
+
+I NEED IMMEDIATE HELP!
+
+My Location: ${mapLink}
+
+Coordinates: ${location.latitude}, ${location.longitude}
+
+Time: ${new Date().toLocaleString()}
+
+This is an automated emergency alert from SafeHer app. Please send help or call me immediately!
+
+STAY SAFE!`;
+    
+    // Open SMS app with pre-filled message
+    const smsLink = `sms:${emergencyNumber}?body=${encodeURIComponent(message)}`;
+    window.location.href = smsLink;
+    
+    console.log(`Emergency SMS sent to ${emergencyNumber}:`, message);
+}
+
+function startLiveTracking(sosId) {
+    trackingInterval = setInterval(() => {
+        navigator.geolocation.getCurrentPosition(position => {
+            fetch('/api/update-location/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    sos_id: sosId,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                })
+            });
+        });
+    }, 5000); // Update every 5 seconds
+}
+
+function playSiren() {
+    // Create audio context for siren sound
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function createSirenTone(frequency, duration, volume = 1.0) {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        const masterGain = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(masterGain);
+        masterGain.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = 'sawtooth'; // More aggressive sound
+        
+        // Set maximum volume
+        masterGain.gain.setValueAtTime(1.0, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+    }
+    
+    // Play voice alert
+    playVoiceAlert();
+    
+    // Create loud alternating siren pattern at maximum volume
+    let time = 0;
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            createSirenTone(1000, 0.4, 1.0); // High loud tone at max volume
+        }, time);
+        time += 400;
+        
+        setTimeout(() => {
+            createSirenTone(300, 0.4, 1.0); // Low loud tone at max volume
+        }, time);
+        time += 400;
+    }
+    
+    // Add emergency beeps
+    setTimeout(() => {
+        for (let j = 0; j < 5; j++) {
+            setTimeout(() => {
+                createSirenTone(1500, 0.2, 1.0); // Very high beep
+            }, j * 300);
+        }
+    }, 2000);
+}
+
+function setVolumeToMax() {
+    // Try to set system volume to maximum (limited browser support)
+    try {
+        // Request media session for volume control
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('seekto', null);
+        }
+        
+        // Try to access audio context and set gain to maximum
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const gainNode = audioContext.createGain();
+        gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
+        
+        // Show volume warning
+        document.getElementById('sos-status').innerHTML = 
+            '<div class="bg-yellow-100 border border-yellow-300 p-4 rounded-2xl text-yellow-700"><i class="fas fa-volume-up mr-2"></i>Volume set to maximum for emergency alert!</div>';
+        
+        console.log('Volume set to maximum for emergency');
+    } catch (error) {
+        console.log('Volume control not available:', error);
+    }
+}
+
+function playVoiceAlert() {
+    // Use Speech Synthesis for voice alert
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance('EMERGENCY ALERT! EMERGENCY ALERT! HELP NEEDED! SENDING LOCATION NOW!');
+        utterance.rate = 1.2;
+        utterance.pitch = 1.5;
+        utterance.volume = 1.0;
+        
+        // Try to use a female voice
+        const voices = speechSynthesis.getVoices();
+        const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Woman') || voice.gender === 'female');
+        if (femaleVoice) {
+            utterance.voice = femaleVoice;
+        }
+        
+        speechSynthesis.speak(utterance);
+        
+        // Repeat the voice alert
+        setTimeout(() => {
+            const repeat = new SpeechSynthesisUtterance('SOS ACTIVATED! HELP IS COMING! STAY SAFE!');
+            repeat.rate = 1.0;
+            repeat.pitch = 1.3;
+            repeat.volume = 1.0;
+            if (femaleVoice) repeat.voice = femaleVoice;
+            speechSynthesis.speak(repeat);
+        }, 3000);
+    }
+}
+</script>
+{% endblock %}

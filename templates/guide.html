@@ -1,0 +1,380 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.fade-in {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.1s; }
+.fade-in:nth-child(2) { animation-delay: 0.2s; }
+.fade-in:nth-child(3) { animation-delay: 0.3s; }
+.fade-in:nth-child(4) { animation-delay: 0.4s; }
+.fade-in:nth-child(5) { animation-delay: 0.5s; }
+.fade-in:nth-child(6) { animation-delay: 0.6s; }
+.fade-in:nth-child(7) { animation-delay: 0.7s; }
+.fade-in:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(236, 72, 153, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(236, 72, 153, 0.6), 0 0 60px rgba(236, 72, 153, 0.4); }
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+.pulse-effect {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.shimmer-btn {
+    background: linear-gradient(45deg, #ec4899, #8b5cf6);
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.glow-effect {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.step-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #ec4899, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
+
+<!-- Guide Header -->
+<div class="text-center mb-16 fade-in">
+    <div class="floating mb-8">
+        <div class="relative inline-block">
+            <i class="fas fa-book-open text-7xl text-indigo-500 pulse-effect"></i>
+            <div class="absolute -top-2 -right-2 w-6 h-6 bg-pink-500 rounded-full animate-ping"></div>
+        </div>
+    </div>
+    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6 tracking-tight">
+        How to Use SafeHer
+    </h1>
+    <div class="max-w-2xl mx-auto">
+        <p class="text-2xl text-gray-700 mb-4 font-medium">Your Complete Safety Guide</p>
+        <p class="text-xl text-indigo-600 italic font-semibold bg-indigo-50 px-6 py-3 rounded-full inline-block">
+            "Step by step instructions for your safety"
+        </p>
+    </div>
+</div>
+
+<!-- Guide Steps -->
+<div class="max-w-6xl mx-auto space-y-12 px-4">
+    
+    <!-- Step 1: Report Incident -->
+    <div class="fade-in step-card rounded-3xl p-10 shadow-2xl border border-pink-200 hover-lift">
+        <div class="flex items-center mb-8">
+            <div class="relative">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mr-6 pulse-effect">
+                    <span class="text-white font-black text-2xl">1</span>
+                </div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-pink-400 rounded-full animate-bounce"></div>
+            </div>
+            <h2 class="text-3xl font-black text-gray-800">Report Incident</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-bold text-pink-600 mb-3">📹 How to Record Evidence:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Go to <strong>Report Incident</strong> page</li>
+                    <li>• Allow camera and location access</li>
+                    <li>• Tap <strong>"START RECORDING"</strong></li>
+                    <li>• Record the incident (back camera)</li>
+                    <li>• Tap <strong>"STOP RECORDING"</strong></li>
+                    <li>• Add description (optional)</li>
+                    <li>• Tap <strong>"SUBMIT REPORT"</strong></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-pink-600 mb-3">📱 What Happens Next:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Video saves to your phone</li>
+                    <li>• SMS app opens automatically</li>
+                    <li>• Location link included in message</li>
+                    <li>• Tap "Send" to alert emergency contact</li>
+                    <li>• Police station gets notified</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Emergency SOS -->
+    <div class="fade-in step-card rounded-3xl p-10 shadow-2xl border border-red-200 hover-lift">
+        <div class="flex items-center mb-8">
+            <div class="relative">
+                <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mr-6 pulse-effect">
+                    <span class="text-white font-black text-2xl">2</span>
+                </div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-red-400 rounded-full animate-ping"></div>
+            </div>
+            <h2 class="text-3xl font-black text-gray-800">Emergency SOS</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-bold text-red-600 mb-3">🚨 How to Use SOS:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Go to <strong>Emergency SOS</strong> page</li>
+                    <li>• Tap the big red <strong>SOS button</strong></li>
+                    <li>• Loud siren will play</li>
+                    <li>• Phone will vibrate strongly</li>
+                    <li>• SMS app opens with emergency message</li>
+                    <li>• Tap "Send" to alert contacts</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-red-600 mb-3">🔊 Emergency Features:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• <strong>Loud siren</strong> + voice alerts</li>
+                    <li>• <strong>Phone vibration</strong> patterns</li>
+                    <li>• <strong>Volume maximized</strong> automatically</li>
+                    <li>• <strong>Live location</strong> tracking starts</li>
+                    <li>• <strong>Google Maps link</strong> in SMS</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Set Emergency Number -->
+    <div class="fade-in step-card rounded-3xl p-10 shadow-2xl border border-blue-200 hover-lift">
+        <div class="flex items-center mb-8">
+            <div class="relative">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mr-6 pulse-effect">
+                    <span class="text-white font-black text-2xl">3</span>
+                </div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full animate-pulse"></div>
+            </div>
+            <h2 class="text-3xl font-black text-gray-800">Set Emergency Number</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-bold text-blue-600 mb-3">📞 How to Set Number:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Tap <strong>"Set Emergency Number"</strong></li>
+                    <li>• Enter your emergency contact</li>
+                    <li>• Can be 3-digit (911, 100) or full number</li>
+                    <li>• Tap <strong>"Save"</strong></li>
+                    <li>• Number saved on your phone</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-blue-600 mb-3">🌍 Emergency Numbers:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• <strong>911</strong> - USA Emergency</li>
+                    <li>• <strong>100</strong> - India Police</li>
+                    <li>• <strong>108</strong> - India Ambulance</li>
+                    <li>• <strong>112</strong> - International Emergency</li>
+                    <li>• Or your family/friend's number</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: WhatsApp Share -->
+    <div class="fade-in step-card rounded-3xl p-10 shadow-2xl border border-green-200 hover-lift">
+        <div class="flex items-center mb-8">
+            <div class="relative">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mr-6 pulse-effect">
+                    <span class="text-white font-black text-2xl">4</span>
+                </div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full animate-bounce"></div>
+            </div>
+            <h2 class="text-3xl font-black text-gray-800">WhatsApp Evidence Sharing</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-bold text-green-600 mb-3">💚 How to Share on WhatsApp:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• After recording video</li>
+                    <li>• Tap <strong>"SHARE ON WHATSAPP"</strong></li>
+                    <li>• WhatsApp opens with message</li>
+                    <li>• Attach the downloaded video</li>
+                    <li>• Send to emergency contact</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-green-600 mb-3">📎 What Gets Shared:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• <strong>Emergency alert</strong> message</li>
+                    <li>• <strong>Google Maps</strong> location link</li>
+                    <li>• <strong>GPS coordinates</strong></li>
+                    <li>• <strong>Timestamp</strong> of incident</li>
+                    <li>• <strong>Video file</strong> (attach manually)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Safety Tips -->
+    <div class="fade-in bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-12 border-2 border-purple-200 hover-lift">
+        <h2 class="text-4xl font-black text-center text-gray-800 mb-12">
+            <i class="fas fa-lightbulb text-purple-500 mr-4 text-5xl floating"></i>
+            <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Important Safety Tips</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <i class="fas fa-mobile-alt text-3xl text-purple-500 mb-3"></i>
+                <h3 class="font-bold text-gray-800 mb-2">Keep Phone Ready</h3>
+                <p class="text-gray-600 text-sm">Always keep your phone charged and easily accessible</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <i class="fas fa-wifi text-3xl text-blue-500 mb-3"></i>
+                <h3 class="font-bold text-gray-800 mb-2">Use HTTPS</h3>
+                <p class="text-gray-600 text-sm">Camera works only on secure (HTTPS) connections</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <i class="fas fa-users text-3xl text-pink-500 mb-3"></i>
+                <h3 class="font-bold text-gray-800 mb-2">Share with Trusted</h3>
+                <p class="text-gray-600 text-sm">Only share your emergency number with trusted contacts</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Browser Requirements -->
+    <div class="fade-in step-card rounded-3xl p-10 shadow-2xl border border-gray-300 hover-lift">
+        <h2 class="text-4xl font-black text-center text-gray-800 mb-10">
+            <i class="fas fa-globe text-indigo-500 mr-4 text-5xl floating"></i>
+            <span class="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Browser Requirements</span>
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="font-bold text-indigo-600 mb-4">✅ Recommended Browsers:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• <strong>Chrome</strong> (Android/Desktop)</li>
+                    <li>• <strong>Safari</strong> (iPhone/iPad/Mac)</li>
+                    <li>• <strong>Edge</strong> (Windows)</li>
+                    <li>• <strong>Firefox</strong> (All platforms)</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="font-bold text-indigo-600 mb-4">⚙️ Required Permissions:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• <strong>Camera</strong> - For video recording</li>
+                    <li>• <strong>Location</strong> - For GPS tracking</li>
+                    <li>• <strong>Microphone</strong> - For audio in videos</li>
+                    <li>• <strong>Storage</strong> - For saving videos</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Info -->
+    <div class="fade-in">
+        <div class="bg-gradient-to-br from-rose-50 to-pink-100 rounded-3xl p-12 text-center border-2 border-pink-200 hover-lift">
+            
+            <!-- Heart Icon -->
+            <div class="mb-8">
+                <i class="fas fa-heart text-5xl text-rose-500 pulse-effect"></i>
+            </div>
+            
+            <!-- Main Heading -->
+            <h2 class="text-4xl font-black text-gray-800 mb-2">
+                Developed with <span class="text-rose-500">Love</span>
+            </h2>
+            <p class="text-xl font-semibold text-gray-700 mb-8">for Women's Safety</p>
+            
+            <!-- Divider -->
+            <div class="w-20 h-1 bg-rose-400 mx-auto mb-8 rounded-full"></div>
+            
+            <!-- App Info -->
+            <div class="mb-10">
+                <h3 class="text-3xl font-black text-rose-600 mb-2">SafeHer</h3>
+                <p class="text-lg text-gray-600 italic">Empowering women through technology</p>
+            </div>
+            
+            <!-- Instagram Button -->
+            <div class="mb-6">
+                <a href="https://www.instagram.com/vivek._.ps?igsh=bmpjNmh2Y2J2ZmR2" 
+                   target="_blank" 
+                   class="group bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl inline-flex items-center">
+                    
+                    <i class="fab fa-instagram text-2xl mr-3 group-hover:rotate-12 transition-transform"></i>
+                    <div>
+                        <div class="font-black">Follow Developer</div>
+                        <div class="text-sm opacity-90">on Instagram</div>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Developer Handle -->
+            <div class="inline-block bg-white px-6 py-2 rounded-full border-2 border-pink-200">
+                <p class="text-lg font-bold text-gray-700">
+                    <i class="fab fa-instagram mr-2 text-pink-500"></i>
+                    @vivek._.ps
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

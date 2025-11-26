@@ -15,6 +15,9 @@ def safety_view(request):
 def guide_view(request):
     return render(request, 'guide.html')
 
+def nearby_help_view(request):
+    return render(request, 'safety/nearby_help.html')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
@@ -22,6 +25,7 @@ urlpatterns = [
     path('sos/', sos_page, name='sos'),
     path('safety/', safety_view, name='safety'),
     path('guide/', guide_view, name='guide'),
+    path('nearby-help/', nearby_help_view, name='nearby_help'),
     path('track/<int:sos_id>/', track_location, name='track'),
     path('api/', include('reports.urls')),
     path('api/', include('emergency.urls')),

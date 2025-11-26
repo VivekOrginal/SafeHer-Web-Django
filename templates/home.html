@@ -103,7 +103,7 @@
     <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-center text-gray-800 mb-6 sm:mb-8 lg:mb-12">
         <i class="fas fa-shield-check text-pink-500 mr-2 sm:mr-3"></i>Your Safety Arsenal
     </h3>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 lg:gap-8">
         <div class="text-center group">
             <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4 group-hover:scale-110 transition-transform shadow-lg">
                 <i class="fas fa-map-marker-alt text-xl sm:text-2xl lg:text-3xl text-white"></i>
@@ -132,13 +132,27 @@
             <h4 class="font-bold text-gray-800 text-sm sm:text-base lg:text-lg mb-1 sm:mb-2">Emergency Number</h4>
             <p class="text-gray-600 text-xs sm:text-sm lg:text-base">Set custom emergency contact</p>
         </div>
+        <div class="text-center group">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-2 sm:mb-3 lg:mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                <i class="fas fa-map-marked-alt text-xl sm:text-2xl lg:text-3xl text-white"></i>
+            </div>
+            <h4 class="font-bold text-gray-800 text-sm sm:text-base lg:text-lg mb-1 sm:mb-2">Nearby Help Centers</h4>
+            <p class="text-gray-600 text-xs sm:text-sm lg:text-base">Find closest police stations, hospitals & safe places</p>
+        </div>
     </div>
     
-    <!-- Guide Button -->
-    <div class="text-center mt-8">
-        <a href="/guide/" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 inline-block">
-            <i class="fas fa-book-open mr-2"></i>How to Use SafeHer
-        </a>
+    <!-- Action Buttons -->
+    <div class="text-center mt-8 space-y-4">
+        <div>
+            <a href="/nearby-help/" class="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 inline-block mr-4">
+                <i class="fas fa-map-marked-alt mr-2"></i>Find Nearby Help Centers
+            </a>
+        </div>
+        <div>
+            <a href="/guide/" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 inline-block">
+                <i class="fas fa-book-open mr-2"></i>How to Use SafeHer
+            </a>
+        </div>
     </div>
 </div>
 
@@ -206,13 +220,83 @@ document.getElementById('save-number').onclick = () => {
         localStorage.setItem('emergencyNumber', emergencyNumber);
         document.getElementById('current-number').textContent = emergencyNumber;
         document.getElementById('phone-modal').classList.add('hidden');
-        alert('Emergency number updated successfully!');
+        showCustomNotification('Emergency number updated successfully!', 'success');
     } else {
-        alert('Please enter a valid number (3-15 digits)!');
+        showCustomNotification('Please enter a valid number (3-15 digits)!', 'error');
     }
 };
 
 // Make emergency number available globally
 window.getEmergencyNumber = () => emergencyNumber;
+
+// Custom notification system
+function showCustomNotification(message, type = 'success') {
+    // Remove existing notification if any
+    const existing = document.getElementById('custom-notification');
+    if (existing) existing.remove();
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.id = 'custom-notification';
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-2xl shadow-2xl transform translate-x-full transition-all duration-500 ease-out max-w-sm`;
+    
+    if (type === 'success') {
+        notification.className += ' bg-gradient-to-r from-green-500 to-emerald-500 text-white';
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-check text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">Success!</p>
+                    <p class="text-xs opacity-90">${message}</p>
+                </div>
+                <button onclick="closeNotification()" class="ml-2 text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    } else if (type === 'error') {
+        notification.className += ' bg-gradient-to-r from-red-500 to-rose-500 text-white';
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-exclamation-triangle text-sm"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="font-bold text-sm">Error!</p>
+                    <p class="text-xs opacity-90">${message}</p>
+                </div>
+                <button onclick="closeNotification()" class="ml-2 text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    }
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+        notification.classList.add('translate-x-0');
+    }, 100);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        closeNotification();
+    }, 4000);
+}
+
+function closeNotification() {
+    const notification = document.getElementById('custom-notification');
+    if (notification) {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            notification.remove();
+        }, 500);
+    }
+}
 </script>
 {% endblock %}

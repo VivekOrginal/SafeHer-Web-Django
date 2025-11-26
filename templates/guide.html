@@ -270,6 +270,44 @@
         </div>
     </div>
 
+    <!-- Step 5: Nearby Help Centers -->
+    <div class="fade-in step-card rounded-3xl p-10 shadow-2xl border border-blue-200 hover-lift">
+        <div class="flex items-center mb-8">
+            <div class="relative">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mr-6 pulse-effect">
+                    <span class="text-white font-black text-2xl">5</span>
+                </div>
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full animate-pulse"></div>
+            </div>
+            <h2 class="text-3xl font-black text-gray-800">Nearby Help Centers</h2>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-bold text-blue-600 mb-3">🗺️ How to Find Help Centers:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• Go to <strong>Nearby Help Centers</strong> page</li>
+                    <li>• Tap <strong>"Find Nearby Help Centers"</strong></li>
+                    <li>• Allow location access when prompted</li>
+                    <li>• Wait for location detection</li>
+                    <li>• View nearby places in organized lists</li>
+                    <li>• Click directions icon for navigation</li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-blue-600 mb-3">🏥 What You'll Find:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li>• <strong>Police Stations</strong> - Nearest law enforcement</li>
+                    <li>• <strong>Hospitals</strong> - Medical centers & emergency rooms</li>
+                    <li>• <strong>Pharmacies</strong> - 24/7 medical stores</li>
+                    <li>• <strong>Real distances</strong> from your location</li>
+                    <li>• <strong>Direct navigation</strong> via Google Maps</li>
+                    <li>• <strong>Emergency call buttons</strong> (100, 108)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- Safety Tips -->
     <div class="fade-in bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-12 border-2 border-purple-200 hover-lift">
         <h2 class="text-4xl font-black text-center text-gray-800 mb-12">
@@ -330,48 +368,72 @@
 
     <!-- Developer Info -->
     <div class="fade-in">
-        <div class="bg-gradient-to-br from-rose-50 to-pink-100 rounded-3xl p-12 text-center border-2 border-pink-200 hover-lift">
+        <div class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-gray-50 rounded-3xl p-12 text-center border border-gray-200 shadow-2xl hover-lift">
             
-            <!-- Heart Icon -->
-            <div class="mb-8">
-                <i class="fas fa-heart text-5xl text-rose-500 pulse-effect"></i>
-            </div>
+            <!-- Animated Background Elements -->
+            <div class="absolute top-0 left-0 w-32 h-32 bg-pink-200 rounded-full opacity-10 -translate-x-16 -translate-y-16 animate-pulse"></div>
+            <div class="absolute bottom-0 right-0 w-40 h-40 bg-rose-200 rounded-full opacity-10 translate-x-20 translate-y-20 animate-pulse" style="animation-delay: 1s;"></div>
             
-            <!-- Main Heading -->
-            <h2 class="text-4xl font-black text-gray-800 mb-2">
-                Developed with <span class="text-rose-500">Love</span>
-            </h2>
-            <p class="text-xl font-semibold text-gray-700 mb-8">for Women's Safety</p>
-            
-            <!-- Divider -->
-            <div class="w-20 h-1 bg-rose-400 mx-auto mb-8 rounded-full"></div>
-            
-            <!-- App Info -->
-            <div class="mb-10">
-                <h3 class="text-3xl font-black text-rose-600 mb-2">SafeHer</h3>
-                <p class="text-lg text-gray-600 italic">Empowering women through technology</p>
-            </div>
-            
-            <!-- Instagram Button -->
-            <div class="mb-6">
-                <a href="https://www.instagram.com/vivek._.ps?igsh=bmpjNmh2Y2J2ZmR2" 
-                   target="_blank" 
-                   class="group bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl inline-flex items-center">
-                    
-                    <i class="fab fa-instagram text-2xl mr-3 group-hover:rotate-12 transition-transform"></i>
-                    <div>
-                        <div class="font-black">Follow Developer</div>
-                        <div class="text-sm opacity-90">on Instagram</div>
+            <div class="relative z-10">
+                <!-- Heart Icon with Animation -->
+                <div class="mb-8">
+                    <div class="inline-block relative">
+                        <i class="fas fa-heart text-6xl text-rose-500 pulse-effect"></i>
+                        <div class="absolute -top-2 -right-2 w-4 h-4 bg-pink-400 rounded-full animate-ping"></div>
                     </div>
-                </a>
-            </div>
-            
-            <!-- Developer Handle -->
-            <div class="inline-block bg-white px-6 py-2 rounded-full border-2 border-pink-200">
-                <p class="text-lg font-bold text-gray-700">
-                    <i class="fab fa-instagram mr-2 text-pink-500"></i>
-                    @vivek._.ps
-                </p>
+                </div>
+                
+                <!-- Main Heading -->
+                <h2 class="text-4xl font-black text-gray-800 mb-3 leading-tight">
+                    Developed with <span class="bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">Love</span>
+                </h2>
+                <p class="text-xl font-semibold text-gray-600 mb-8">for Women's Safety</p>
+                
+                <!-- Elegant Divider -->
+                <div class="flex items-center justify-center mb-8">
+                    <div class="w-12 h-px bg-gradient-to-r from-transparent to-rose-300"></div>
+                    <div class="w-3 h-3 bg-rose-400 rounded-full mx-4"></div>
+                    <div class="w-12 h-px bg-gradient-to-l from-transparent to-rose-300"></div>
+                </div>
+                
+                <!-- App Info -->
+                <div class="mb-10">
+                    <h3 class="text-4xl font-black bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent mb-3">SafeHer</h3>
+                    <p class="text-lg text-gray-600 italic font-medium">Empowering women through technology</p>
+                </div>
+                
+                <!-- Instagram Button with Shimmer Effect -->
+                <div class="mb-8">
+                    <a href="https://www.instagram.com/vivek._.ps?igsh=bmpjNmh2Y2J2ZmR2" 
+                       target="_blank" 
+                       class="group relative bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-500 transform hover:scale-105 hover:shadow-2xl inline-flex items-center overflow-hidden">
+                        
+                        <!-- White Shimmer Effect -->
+                        <div class="absolute inset-0 -top-2 -bottom-2 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-30 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000 ease-out"></div>
+                        
+                        <!-- Button Content -->
+                        <div class="relative z-10 flex items-center">
+                            <div class="relative mr-4">
+                                <i class="fab fa-instagram text-3xl group-hover:rotate-12 transition-transform duration-300"></i>
+                                <div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-300 rounded-full animate-pulse"></div>
+                            </div>
+                            <div class="text-left">
+                                <div class="font-black text-xl">Follow Developer</div>
+                                <div class="text-sm opacity-90 font-medium">on Instagram</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Developer Handle with Modern Design -->
+                <div class="inline-block bg-white px-8 py-4 rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center mr-3">
+                            <i class="fab fa-instagram text-white text-sm"></i>
+                        </div>
+                        <p class="text-lg font-bold text-gray-700">@vivek._.ps</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -111,7 +111,7 @@ document.getElementById('sos-button').onclick = () => {
 
 function sendEmergencySMS(location) {
     // Get emergency number from localStorage or use default
-    const emergencyNumber = localStorage.getItem('emergencyNumber') || '9037612009';
+    const emergencyNumber = localStorage.getItem('emergencyNumber') || '100';
     
     // Create Google Maps link
     const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
@@ -158,107 +158,125 @@ function startLiveTracking(sosId) {
 }
 
 function playSiren() {
-    // Create audio context for siren sound
+    // Create audio context for volume boosting
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    function createSirenTone(frequency, duration, volume = 1.0) {
+    // Create audio element
+    const audio = new Audio('/media/police_siren.mp3');
+    audio.volume = 1.0;
+    audio.loop = true;
+    
+    // Create audio source from the MP3
+    const source = audioContext.createMediaElementSource(audio);
+    
+    // Create gain node for volume boost
+    const gainNode = audioContext.createGain();
+    gainNode.gain.setValueAtTime(3.0, audioContext.currentTime); // 3x volume boost
+    
+    // Create compressor for maximum loudness
+    const compressor = audioContext.createDynamicsCompressor();
+    compressor.threshold.setValueAtTime(-24, audioContext.currentTime);
+    compressor.knee.setValueAtTime(30, audioContext.currentTime);
+    compressor.ratio.setValueAtTime(12, audioContext.currentTime);
+    compressor.attack.setValueAtTime(0.003, audioContext.currentTime);
+    compressor.release.setValueAtTime(0.25, audioContext.currentTime);
+    
+    // Connect audio chain: source -> gain -> compressor -> output
+    source.connect(gainNode);
+    gainNode.connect(compressor);
+    compressor.connect(audioContext.destination);
+    
+    // Play the boosted audio
+    audio.play().catch(error => {
+        console.log('Audio play failed:', error);
+        playFallbackSiren();
+    });
+    
+    // Stop after 60 seconds
+    setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0;
+    }, 60000);
+}
+
+function playFallbackSiren() {
+    // Fallback generated siren if MP3 doesn't work
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function createSirenTone(frequency, duration) {
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        const masterGain = audioContext.createGain();
         
         oscillator.connect(gainNode);
-        gainNode.connect(masterGain);
-        masterGain.connect(audioContext.destination);
+        gainNode.connect(audioContext.destination);
         
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-        oscillator.type = 'sawtooth'; // More aggressive sound
+        oscillator.type = 'square';
         
-        // Set maximum volume
-        masterGain.gain.setValueAtTime(1.0, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
         
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + duration);
     }
     
-    // Play voice alert
-    playVoiceAlert();
-    
-    // Create loud alternating siren pattern at maximum volume
-    let time = 0;
-    for (let i = 0; i < 10; i++) {
+    // Simple hi-lo pattern as fallback
+    for (let i = 0; i < 120; i++) {
         setTimeout(() => {
-            createSirenTone(1000, 0.4, 1.0); // High loud tone at max volume
-        }, time);
-        time += 400;
-        
-        setTimeout(() => {
-            createSirenTone(300, 0.4, 1.0); // Low loud tone at max volume
-        }, time);
-        time += 400;
+            createSirenTone(i % 2 === 0 ? 1600 : 400, 0.5);
+        }, i * 500);
     }
-    
-    // Add emergency beeps
-    setTimeout(() => {
-        for (let j = 0; j < 5; j++) {
-            setTimeout(() => {
-                createSirenTone(1500, 0.2, 1.0); // Very high beep
-            }, j * 300);
-        }
-    }, 2000);
 }
 
 function setVolumeToMax() {
-    // Try to set system volume to maximum (limited browser support)
     try {
-        // Request media session for volume control
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('seekto', null);
+        // Method 1: Wake Lock to prevent sleep
+        if ('wakeLock' in navigator) {
+            navigator.wakeLock.request('screen').catch(err => console.log('Wake lock failed'));
         }
         
-        // Try to access audio context and set gain to maximum
+        // Method 2: Media Session for better audio control
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: 'EMERGENCY SOS ALERT - MAXIMUM VOLUME',
+                artist: 'SafeHer Emergency System'
+            });
+        }
+        
+        // Method 3: Request audio focus
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        
+        // Method 4: Create silent audio to unlock volume
+        const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        gainNode.gain.setValueAtTime(1.0, audioContext.currentTime);
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.1);
         
-        // Show volume warning
+        // Show volume instruction
         document.getElementById('sos-status').innerHTML = 
-            '<div class="bg-yellow-100 border border-yellow-300 p-4 rounded-2xl text-yellow-700"><i class="fas fa-volume-up mr-2"></i>Volume set to maximum for emergency alert!</div>';
+            `<div class="bg-red-100 border border-red-300 p-4 rounded-2xl text-red-700 animate-pulse">
+                <i class="fas fa-volume-up mr-2 text-xl"></i>
+                <strong>EMERGENCY ALERT ACTIVE!</strong><br>
+                <small>If sound is low, quickly press volume up buttons on your device!</small>
+            </div>`;
         
-        console.log('Volume set to maximum for emergency');
+        console.log('Audio system optimized for emergency');
     } catch (error) {
-        console.log('Volume control not available:', error);
+        console.log('Volume optimization error:', error);
+        document.getElementById('sos-status').innerHTML = 
+            `<div class="bg-yellow-100 border border-yellow-300 p-4 rounded-2xl text-yellow-700">
+                <i class="fas fa-volume-up mr-2"></i>
+                <strong>Please manually increase your device volume for emergency alert!</strong>
+            </div>`;
     }
 }
 
-function playVoiceAlert() {
-    // Use Speech Synthesis for voice alert
-    if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance('EMERGENCY ALERT! EMERGENCY ALERT! HELP NEEDED! SENDING LOCATION NOW!');
-        utterance.rate = 1.2;
-        utterance.pitch = 1.5;
-        utterance.volume = 1.0;
-        
-        // Try to use a female voice
-        const voices = speechSynthesis.getVoices();
-        const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('Woman') || voice.gender === 'female');
-        if (femaleVoice) {
-            utterance.voice = femaleVoice;
-        }
-        
-        speechSynthesis.speak(utterance);
-        
-        // Repeat the voice alert
-        setTimeout(() => {
-            const repeat = new SpeechSynthesisUtterance('SOS ACTIVATED! HELP IS COMING! STAY SAFE!');
-            repeat.rate = 1.0;
-            repeat.pitch = 1.3;
-            repeat.volume = 1.0;
-            if (femaleVoice) repeat.voice = femaleVoice;
-            speechSynthesis.speak(repeat);
-        }, 3000);
-    }
-}
+// Voice alerts removed - Pure siren only
 </script>
 {% endblock %}

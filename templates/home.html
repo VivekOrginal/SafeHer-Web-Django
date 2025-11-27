@@ -182,7 +182,7 @@
             <i class="fas fa-phone text-blue-500 mr-2"></i>Set Emergency Number
         </h3>
         <div class="space-y-4">
-            <input type="tel" id="emergency-number" placeholder="Enter number (e.g., 911, 100, 9037612009)" 
+            <input type="tel" id="emergency-number" placeholder="Enter number (e.g., 911, 100, your contact)" 
                    class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none">
             <div class="flex space-x-3">
                 <button id="save-number" class="flex-1 bg-blue-500 text-white py-3 rounded-lg font-bold hover:bg-blue-600">
@@ -194,14 +194,14 @@
             </div>
         </div>
         <div class="mt-4 text-center">
-            <p class="text-sm text-gray-600">Current: <span id="current-number" class="font-bold text-blue-600">9037612009</span></p>
+            <p class="text-sm text-gray-600">Current: <span id="current-number" class="font-bold text-blue-600"></span></p>
         </div>
     </div>
 </div>
 
 <script>
 // Emergency number management
-let emergencyNumber = localStorage.getItem('emergencyNumber') || '9037612009';
+let emergencyNumber = localStorage.getItem('emergencyNumber') || '';
 document.getElementById('current-number').textContent = emergencyNumber;
 
 document.getElementById('set-number-btn').onclick = () => {

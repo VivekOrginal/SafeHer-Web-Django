@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeHer - Loading</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 50%, #fce7f3 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .loading-container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo-container {
+            position: relative;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-ring {
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgba(236, 72, 153, 0.1);
+            border-top: 3px solid #ec4899;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            position: absolute;
+        }
+        
+        .logo-ring:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            border: 3px solid rgba(244, 63, 94, 0.1);
+            border-top: 3px solid #f43f5e;
+            animation-duration: 3s;
+            animation-direction: reverse;
+        }
+        
+        .logo-ring:nth-child(3) {
+            width: 160px;
+            height: 160px;
+            border: 2px solid rgba(251, 113, 133, 0.1);
+            border-top: 2px solid #fb7185;
+            animation-duration: 4s;
+        }
+        
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.3);
+            position: relative;
+            z-index: 10;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .logo-icon i {
+            font-size: 2.5rem;
+            color: white;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .app-name {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        .app-name .safe {
+            background: linear-gradient(135deg, #374151, #6b7280);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .app-name .her {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: #6b7280;
+            font-weight: 400;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        .loading-progress {
+            width: 200px;
+            height: 6px;
+            background: rgba(236, 72, 153, 0.1);
+            border-radius: 10px;
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ec4899, #f43f5e, #fb7185);
+            border-radius: 10px;
+            animation: progress 3s ease-in-out;
+            transform-origin: left;
+        }
+        
+        .loading-text {
+            color: #6b7280;
+            font-size: 1rem;
+            font-weight: 500;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            color: #ec4899;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            animation: floatHeart 8s ease-in-out infinite;
+        }
+        
+        .heart:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .heart:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+            color: #f43f5e;
+        }
+        
+        .heart:nth-child(3) {
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 4s;
+            color: #fb7185;
+        }
+        
+        .heart:nth-child(4) {
+            top: 40%;
+            right: 30%;
+            animation-delay: 6s;
+            color: #fda4af;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 20px 40px rgba(236, 72, 153, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(236, 72, 153, 0.4); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes progress {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+        
+        @keyframes floatHeart {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translateY(-20px) rotate(10deg);
+                opacity: 0.6;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .app-name {
+                font-size: 2.5rem;
+            }
+            .tagline {
+                font-size: 1.1rem;
+            }
+            .logo-ring {
+                width: 100px;
+                height: 100px;
+            }
+            .logo-ring:nth-child(2) {
+                width: 120px;
+                height: 120px;
+            }
+            .logo-ring:nth-child(3) {
+                width: 140px;
+                height: 140px;
+            }
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+            }
+            .logo-icon i {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="floating-hearts">
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart"></i>
+    </div>
+    
+    <div class="loading-container">
+        <div class="logo-container">
+            <div class="logo-ring"></div>
+            <div class="logo-ring"></div>
+            <div class="logo-ring"></div>
+            <div class="logo-icon">
+                <i class="fas fa-shield-heart"></i>
+            </div>
+        </div>
+        
+        <h1 class="app-name">
+            <span class="safe">Safe</span><span class="her">Her</span>
+        </h1>
+        
+        <p class="tagline">Your Personal Safety Companion</p>
+        
+        <div class="loading-progress">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <p class="loading-text">Preparing your safety tools...</p>
+    </div>
+    
+    <script>
+        // Auto redirect to home after 3 seconds
+        setTimeout(() => {
+            window.location.href = '/home/';
+        }, 3000);
+    </script>
+</body>
+</html>

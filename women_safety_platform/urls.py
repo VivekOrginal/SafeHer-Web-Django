@@ -7,6 +7,10 @@ from emergency.views import sos_page, track_location
 from django.shortcuts import render
 
 def home_view(request):
+    # Always show loading page first
+    return render(request, 'loading.html')
+
+def main_home_view(request):
     return render(request, 'home.html')
 
 def safety_view(request):
@@ -18,14 +22,19 @@ def guide_view(request):
 def nearby_help_view(request):
     return render(request, 'safety/nearby_help.html')
 
+def loading_view(request):
+    return render(request, 'loading.html')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
+    path('home/', main_home_view, name='main_home'),
     path('report/', report_incident, name='report'),
     path('sos/', sos_page, name='sos'),
     path('safety/', safety_view, name='safety'),
     path('guide/', guide_view, name='guide'),
     path('nearby-help/', nearby_help_view, name='nearby_help'),
+    path('loading/', loading_view, name='loading'),
     path('track/<int:sos_id>/', track_location, name='track'),
     path('api/', include('reports.urls')),
     path('api/', include('emergency.urls')),

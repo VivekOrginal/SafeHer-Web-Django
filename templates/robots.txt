@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://safeher-pkh4.onrender.com/sitemap.xml

@@ -47,6 +47,8 @@ urlpatterns = [
     path('api/', include('emergency.urls')),
     path('robots.txt', TemplateView.as_view(
         template_name='robots.txt', content_type='text/plain')),
+    path('google35d4a1f1f9e0c372.html', TemplateView.as_view(
+        template_name='google35d4a1f1f9e0c372.html', content_type='text/html')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 ]
 

@@ -106,7 +106,7 @@ let mediaRecorder;
 let recordedChunks = [];
 let currentLocation = null;
 
-// Get user location with better error handling
+// Enhanced location access for modern Android
 function getCurrentLocation() {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
@@ -114,28 +114,66 @@ function getCurrentLocation() {
             return;
         }
         
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                currentLocation = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                };
-                document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Location access granted!</div>';
-                loadNearbyStations();
-                resolve(currentLocation);
-            },
-            error => {
-                console.error('Location error:', error);
-                document.getElementById('status').innerHTML = '<div class="text-red-600">❌ Please allow location access and refresh page.</div>';
-                reject(error);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 60000
-            }
-        );
+        // Check if permission is already granted
+        if (navigator.permissions) {
+            navigator.permissions.query({name: 'geolocation'}).then(result => {
+                if (result.state === 'denied') {
+                    showLocationHelp();
+                    reject('Location permission denied');
+                    return;
+                }
+                requestLocation(resolve, reject);
+            }).catch(() => {
+                // Fallback if permissions API not available
+                requestLocation(resolve, reject);
+            });
+        } else {
+            requestLocation(resolve, reject);
+        }
     });
+}
+
+function requestLocation(resolve, reject) {
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            currentLocation = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            };
+            document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Location access granted!</div>';
+            loadNearbyStations();
+            resolve(currentLocation);
+        },
+        error => {
+            console.error('Location error:', error);
+            showLocationHelp();
+            reject(error);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+    );
+}
+
+function showLocationHelp() {
+    document.getElementById('status').innerHTML = `
+        <div class="bg-yellow-100 border border-yellow-300 p-4 rounded-2xl text-yellow-700">
+            <p class="font-bold mb-2">📍 Location Access Needed</p>
+            <p class="text-sm mb-2">For Android Chrome:</p>
+            <p class="text-xs">1. Tap the 🔒 lock icon in address bar</p>
+            <p class="text-xs">2. Enable Location permission</p>
+            <p class="text-xs">3. Refresh this page</p>
+            <button onclick="retryLocation()" class="mt-3 bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
+                Try Again
+            </button>
+        </div>
+    `;
+}
+
+function retryLocation() {
+    getCurrentLocation().catch(() => {});
 }
 
 // Request location on page load
@@ -179,79 +217,71 @@ function displayPoliceStations(stations) {
     }
 }
 
-// Request location permission first
-function requestLocationPermission() {
-    return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            reject('Geolocation not supported on this device');
-            return;
-        }
-        
-        // Request location with high accuracy
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                currentLocation = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                };
-                document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Location & Camera ready!</div>';
-                resolve(currentLocation);
-            },
-            error => {
-                console.error('Location error:', error);
-                let errorMsg = 'Location access denied. ';
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMsg += 'Please allow location in browser settings.';
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMsg += 'Location unavailable. Try again.';
-                        break;
-                    case error.TIMEOUT:
-                        errorMsg += 'Location timeout. Try again.';
-                        break;
-                }
-                document.getElementById('status').innerHTML = `<div class="text-red-600">❌ ${errorMsg}</div>`;
-                reject(error);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 0
+// This function is now replaced by getCurrentLocation() above
+
+// Enhanced camera access for modern Android
+function requestCameraPermission() {
+    // Check camera permission first
+    if (navigator.permissions) {
+        navigator.permissions.query({name: 'camera'}).then(result => {
+            if (result.state === 'denied') {
+                showCameraHelp();
+                return;
             }
-        );
-    });
+            requestCamera();
+        }).catch(() => {
+            requestCamera();
+        });
+    } else {
+        requestCamera();
+    }
 }
 
-// Request camera permission for mobile with fallbacks
-function requestCameraPermission() {
-    // Multiple fallbacks for different browsers
-    navigator.getUserMedia = navigator.getUserMedia || 
-                           navigator.webkitGetUserMedia || 
-                           navigator.mozGetUserMedia || 
-                           navigator.msGetUserMedia;
+function requestCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showCameraHelp();
+        return;
+    }
     
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Modern browsers
-        navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: 'environment' }, // Use back camera
-            audio: true 
-        })
+    // Enhanced constraints for better Android compatibility
+    const constraints = {
+        video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+        },
+        audio: true
+    };
+    
+    navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
             document.getElementById('video').srcObject = stream;
             document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Camera ready! Tap START RECORDING.</div>';
             setupRecording(stream);
         })
         .catch(error => {
-            console.log('Modern API failed, trying fallback...');
-            tryFallbackCamera();
+            console.error('Camera error:', error);
+            showCameraHelp();
         });
-    } else if (navigator.getUserMedia) {
-        // Fallback for older browsers
-        tryFallbackCamera();
-    } else {
-        document.getElementById('status').innerHTML = '<div class="text-orange-600">⚠️ Use Chrome or Safari browser for camera access.</div>';
-    }
+}
+
+function showCameraHelp() {
+    document.getElementById('status').innerHTML = `
+        <div class="bg-red-100 border border-red-300 p-4 rounded-2xl text-red-700">
+            <p class="font-bold mb-2">📷 Camera Access Needed</p>
+            <p class="text-sm mb-2">For Android Chrome:</p>
+            <p class="text-xs">1. Tap the 🔒 lock icon in address bar</p>
+            <p class="text-xs">2. Enable Camera & Microphone</p>
+            <p class="text-xs">3. Refresh this page</p>
+            <button onclick="retryCamera()" class="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold">
+                Try Again
+            </button>
+        </div>
+    `;
+}
+
+function retryCamera() {
+    requestCameraPermission();
 }
 
 function tryFallbackCamera() {
@@ -309,18 +339,35 @@ function setupRecording(stream) {
     };
 }
 
-// Auto-request location and camera permission on page load
+// Enhanced initialization for modern Android
 async function initializeApp() {
-    try {
-        // Request location first
-        await requestLocationPermission();
-        // Then request camera
-        requestCameraPermission();
-    } catch (error) {
-        console.error('Initialization failed:', error);
-        document.getElementById('status').innerHTML = 
-            '<div class="text-orange-600">⚠️ Please allow location access in browser settings and refresh page.</div>';
-    }
+    // Show initial loading
+    document.getElementById('status').innerHTML = '<div class="text-blue-600">🔄 Requesting permissions...</div>';
+    
+    // Add user interaction requirement for modern browsers
+    document.addEventListener('click', handleFirstInteraction, { once: true });
+    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    
+    // Try immediate initialization
+    setTimeout(tryInitialization, 1000);
+}
+
+function handleFirstInteraction() {
+    tryInitialization();
+}
+
+function tryInitialization() {
+    // Request location first
+    getCurrentLocation()
+        .then(() => {
+            // Then request camera
+            requestCameraPermission();
+        })
+        .catch(error => {
+            console.error('Initialization failed:', error);
+            // Show help but don't block camera request
+            requestCameraPermission();
+        });
 }
 
 // Initialize on page load
@@ -410,41 +457,63 @@ function sendAutomaticSMS(location, description) {
     const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
     
     // Create SMS message
-    const message = `🚨 INCIDENT REPORT from SafeHer App
-
-Location: ${mapLink}
-
-Coordinates: ${location.latitude}, ${location.longitude}
-
-Description: ${description}
-
-Time: ${new Date().toLocaleString()}
-
-Video evidence recorded. Please check immediately!
-
-Sent via SafeHer Safety App`;
+    const message = `🚨 INCIDENT REPORT from SafeHer App\n\nLocation: ${mapLink}\n\nCoordinates: ${location.latitude}, ${location.longitude}\n\nDescription: ${description}\n\nTime: ${new Date().toLocaleString()}\n\nVideo evidence recorded. Please check immediately!\n\nSent via SafeHer Safety App`;
     
-    // Create SMS link
-    const smsLink = `sms:${emergencyNumber}?body=${encodeURIComponent(message)}`;
+    // Enhanced SMS handling for different Android versions
+    const smsLinks = [
+        `sms:${emergencyNumber}?body=${encodeURIComponent(message)}`,
+        `sms:${emergencyNumber}&body=${encodeURIComponent(message)}`,
+        `sms://${emergencyNumber}?body=${encodeURIComponent(message)}`
+    ];
     
-    // Open SMS app
-    try {
-        window.open(smsLink, '_blank');
-        // Fallback for mobile
+    // Try multiple SMS methods
+    let smsOpened = false;
+    
+    smsLinks.forEach((smsLink, index) => {
         setTimeout(() => {
-            window.location.href = smsLink;
-        }, 500);
-        
-        console.log(`SMS prepared for ${emergencyNumber}:`, message);
-        
-        // Show success message
-        document.getElementById('status').innerHTML = 
-            `<div class="bg-blue-100 border border-blue-300 p-4 rounded-2xl"><div class="flex items-center space-x-2 text-blue-700"><i class="fas fa-sms text-xl"></i><div><p class="font-bold">SMS Ready!</p><p class="text-sm">SMS app opened with location to ${emergencyNumber}</p><p class="text-xs mt-1">Tap Send in SMS app to alert emergency contact</p></div></div></div>`;
-        
-    } catch (error) {
-        console.error('SMS error:', error);
-        alert(`Failed to open SMS. Please manually send location to ${emergencyNumber}`);
-    }
+            if (!smsOpened) {
+                try {
+                    if (index === 0) {
+                        // Primary method
+                        window.location.href = smsLink;
+                    } else {
+                        // Fallback methods
+                        const a = document.createElement('a');
+                        a.href = smsLink;
+                        a.click();
+                    }
+                    smsOpened = true;
+                } catch (error) {
+                    console.log(`SMS method ${index + 1} failed:`, error);
+                }
+            }
+        }, index * 1000);
+    });
+    
+    // Show instructions
+    document.getElementById('status').innerHTML = `
+        <div class="bg-blue-100 border border-blue-300 p-4 rounded-2xl">
+            <div class="flex items-center space-x-2 text-blue-700">
+                <i class="fas fa-sms text-xl"></i>
+                <div>
+                    <p class="font-bold">📱 SMS Opening...</p>
+                    <p class="text-sm">To: ${emergencyNumber}</p>
+                    <p class="text-xs mt-1">If SMS doesn't open, copy this number and send manually</p>
+                    <button onclick="copyToClipboard('${emergencyNumber}')" class="mt-2 bg-blue-500 text-white px-3 py-1 rounded text-xs">
+                        Copy Number
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Number copied! Open SMS app and paste.');
+    }).catch(() => {
+        prompt('Copy this number:', text);
+    });
 }
 
 // WhatsApp sharing functionality

@@ -73,12 +73,8 @@ document.getElementById('sos-button').onclick = () => {
     // Play siren sound
     playSiren();
     
-    navigator.geolocation.getCurrentPosition(position => {
-        const location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-        };
-        
+    // Enhanced location request for SOS
+    getLocationForSOS().then(location => {
         // Send automatic SMS with location
         sendEmergencySMS(location);
         
@@ -122,54 +118,117 @@ document.getElementById('sos-button').onclick = () => {
                 startLiveTracking(data.sos_id);
             }
         });
+    }).catch(error => {
+        // Even without location, activate SOS
+        sosActive = true;
+        const sosBtn = document.getElementById('sos-button');
+        sosBtn.classList.add('animate-pulse', 'bg-red-800');
+        sosBtn.innerHTML = '🚨';
+        
+        document.getElementById('sos-status').innerHTML = 
+            `<div class="bg-red-100 border border-red-300 p-6 rounded-2xl"><div class="flex items-center justify-center space-x-3 text-red-700 mb-3"><i class="fas fa-shield-alt text-2xl"></i><div><p class="font-bold text-lg">SOS ACTIVATED</p><p class="text-sm">Location unavailable but SMS sent!</p></div></div></div>`;
+        
+        // Send SMS without location
+        sendEmergencySMS(null);
     });
 };
+
+function getLocationForSOS() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject('Geolocation not supported');
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                resolve({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+            },
+            error => {
+                console.error('SOS Location error:', error);
+                reject(error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 30000
+            }
+        );
+    });
+}
 
 function sendEmergencySMS(location) {
     // Get emergency number from localStorage or use default
     const emergencyNumber = localStorage.getItem('emergencyNumber') || '100';
     
-    // Create Google Maps link
-    const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+    let message;
+    if (location) {
+        // Create Google Maps link
+        const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
+        
+        // Create emergency SMS message with location
+        message = `🚨 EMERGENCY SOS ALERT!\n\nI NEED IMMEDIATE HELP!\n\nMy Location: ${mapLink}\n\nCoordinates: ${location.latitude}, ${location.longitude}\n\nTime: ${new Date().toLocaleString()}\n\nThis is an automated emergency alert from SafeHer app. Please send help or call me immediately!\n\nSTAY SAFE!`;
+    } else {
+        // Emergency message without location
+        message = `🚨 EMERGENCY SOS ALERT!\n\nI NEED IMMEDIATE HELP!\n\nLocation: Unable to determine\n\nTime: ${new Date().toLocaleString()}\n\nThis is an automated emergency alert from SafeHer app. Please call me immediately!\n\nSTAY SAFE!`;
+    }
     
-    // Create emergency SMS message
-    const message = `🚨 EMERGENCY SOS ALERT!
-
-I NEED IMMEDIATE HELP!
-
-My Location: ${mapLink}
-
-Coordinates: ${location.latitude}, ${location.longitude}
-
-Time: ${new Date().toLocaleString()}
-
-This is an automated emergency alert from SafeHer app. Please send help or call me immediately!
-
-STAY SAFE!`;
+    // Enhanced SMS handling for Android
+    const smsLinks = [
+        `sms:${emergencyNumber}?body=${encodeURIComponent(message)}`,
+        `sms:${emergencyNumber}&body=${encodeURIComponent(message)}`,
+        `sms://${emergencyNumber}?body=${encodeURIComponent(message)}`
+    ];
     
-    // Open SMS app with pre-filled message
-    const smsLink = `sms:${emergencyNumber}?body=${encodeURIComponent(message)}`;
-    window.location.href = smsLink;
+    // Try multiple SMS methods
+    smsLinks.forEach((smsLink, index) => {
+        setTimeout(() => {
+            try {
+                if (index === 0) {
+                    window.location.href = smsLink;
+                } else {
+                    const a = document.createElement('a');
+                    a.href = smsLink;
+                    a.click();
+                }
+            } catch (error) {
+                console.log(`SMS method ${index + 1} failed:`, error);
+            }
+        }, index * 500);
+    });
     
     console.log(`Emergency SMS sent to ${emergencyNumber}:`, message);
 }
 
 function startLiveTracking(sosId) {
     trackingInterval = setInterval(() => {
-        navigator.geolocation.getCurrentPosition(position => {
-            fetch('/api/update-location/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    sos_id: sosId,
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                })
-            });
-        });
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                fetch('/api/update-location/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        sos_id: sosId,
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    })
+                });
+            },
+            error => {
+                console.log('Tracking location error:', error);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 10000
+            }
+        );
     }, 5000); // Update every 5 seconds
 }
 

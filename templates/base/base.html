@@ -82,5 +82,40 @@
             </div>
         </div>
     </footer>
+    <script>
+        // Global permission helper for Android
+        window.requestAllPermissions = function() {
+            // Request location permission
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    () => console.log('Location permission granted'),
+                    () => console.log('Location permission denied'),
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            }
+            
+            // Request camera permission
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(stream => {
+                        console.log('Camera permission granted');
+                        stream.getTracks().forEach(track => track.stop());
+                    })
+                    .catch(() => console.log('Camera permission denied'));
+            }
+        };
+        
+        // Auto-request on first user interaction
+        let permissionsRequested = false;
+        function requestPermissionsOnce() {
+            if (!permissionsRequested) {
+                permissionsRequested = true;
+                window.requestAllPermissions();
+            }
+        }
+        
+        document.addEventListener('click', requestPermissionsOnce, { once: true });
+        document.addEventListener('touchstart', requestPermissionsOnce, { once: true });
+    </script>
 </body>
 </html>

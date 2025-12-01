@@ -82,40 +82,89 @@
             </div>
         </div>
     </footer>
+    <!-- Permission Request Modal -->
+    <div id="permission-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+            <div class="text-6xl mb-4">🔒</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Enable Permissions</h3>
+            <p class="text-gray-600 mb-6 text-sm">SafeHer needs location and camera access to protect you in emergencies.</p>
+            <button id="enable-permissions" class="w-full bg-gradient-to-r from-pink-500 to-red-500 text-white py-3 rounded-xl font-bold mb-3">
+                Enable Now
+            </button>
+            <p class="text-xs text-gray-500">Tap "Allow" when browser asks for permissions</p>
+        </div>
+    </div>
+
     <script>
-        // Global permission helper for Android
-        window.requestAllPermissions = function() {
-            // Request location permission
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    () => console.log('Location permission granted'),
-                    () => console.log('Location permission denied'),
-                    { enableHighAccuracy: true, timeout: 5000 }
-                );
+        // Aggressive permission system for new Android phones
+        let permissionModal = document.getElementById('permission-modal');
+        let permissionsGranted = false;
+        
+        // Show modal immediately on page load
+        setTimeout(() => {
+            if (!permissionsGranted) {
+                permissionModal.style.display = 'flex';
             }
-            
-            // Request camera permission
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                    .then(stream => {
-                        console.log('Camera permission granted');
-                        stream.getTracks().forEach(track => track.stop());
-                    })
-                    .catch(() => console.log('Camera permission denied'));
+        }, 2000);
+        
+        document.getElementById('enable-permissions').onclick = async function() {
+            try {
+                // Force location request with user gesture
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        console.log('Location granted');
+                        permissionsGranted = true;
+                        permissionModal.style.display = 'none';
+                    },
+                    error => {
+                        // Show manual instructions for Realme/Android
+                        showManualInstructions();
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+                
+                // Also request camera
+                if (navigator.mediaDevices) {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+            } catch (error) {
+                showManualInstructions();
             }
         };
         
-        // Auto-request on first user interaction
-        let permissionsRequested = false;
-        function requestPermissionsOnce() {
-            if (!permissionsRequested) {
-                permissionsRequested = true;
-                window.requestAllPermissions();
-            }
+        function showManualInstructions() {
+            document.getElementById('permission-modal').innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center">
+                    <div class="text-4xl mb-4">📱</div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">Manual Setup Required</h3>
+                    <div class="text-left text-sm text-gray-700 space-y-2 mb-4">
+                        <p><strong>For Realme/Android:</strong></p>
+                        <p>1. Tap the 🔒 lock icon in address bar</p>
+                        <p>2. Enable "Location" permission</p>
+                        <p>3. Enable "Camera" permission</p>
+                        <p>4. Refresh this page</p>
+                    </div>
+                    <button onclick="location.reload()" class="w-full bg-blue-500 text-white py-3 rounded-xl font-bold">
+                        Refresh Page
+                    </button>
+                </div>
+            `;
         }
         
-        document.addEventListener('click', requestPermissionsOnce, { once: true });
-        document.addEventListener('touchstart', requestPermissionsOnce, { once: true });
+        // Hide modal if permissions already granted
+        if (navigator.permissions) {
+            Promise.all([
+                navigator.permissions.query({name: 'geolocation'}),
+                navigator.permissions.query({name: 'camera'})
+            ]).then(results => {
+                if (results[0].state === 'granted' && results[1].state === 'granted') {
+                    permissionsGranted = true;
+                    permissionModal.style.display = 'none';
+                }
+            }).catch(() => {});
+        }
     </script>
 </body>
 </html>

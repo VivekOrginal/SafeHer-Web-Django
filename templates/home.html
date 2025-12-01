@@ -27,8 +27,11 @@
             </div>
         </div>
         
-        <!-- Emergency Number Setting -->
-        <div class="mt-6 sm:mt-8">
+        <!-- Permission & Emergency Setup -->
+        <div class="mt-6 sm:mt-8 space-y-3">
+            <button id="request-permissions" class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+                <i class="fas fa-shield-alt mr-2"></i>Enable Safety Permissions
+            </button>
             <button id="set-number-btn" class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
                 <i class="fas fa-phone-alt mr-2"></i>Set Emergency Number
             </button>
@@ -203,6 +206,26 @@
 // Emergency number management
 let emergencyNumber = localStorage.getItem('emergencyNumber') || '';
 document.getElementById('current-number').textContent = emergencyNumber;
+
+// Permission request handler
+document.getElementById('request-permissions').onclick = function() {
+    // Force show permission modal
+    document.getElementById('permission-modal').style.display = 'flex';
+};
+
+// Check if permissions are already granted
+if (navigator.permissions) {
+    Promise.all([
+        navigator.permissions.query({name: 'geolocation'}),
+        navigator.permissions.query({name: 'camera'})
+    ]).then(results => {
+        if (results[0].state === 'granted' && results[1].state === 'granted') {
+            document.getElementById('request-permissions').innerHTML = '<i class="fas fa-check mr-2"></i>Permissions Enabled';
+            document.getElementById('request-permissions').classList.remove('from-red-500', 'to-pink-500');
+            document.getElementById('request-permissions').classList.add('from-green-500', 'to-green-600');
+        }
+    }).catch(() => {});
+}
 
 document.getElementById('set-number-btn').onclick = () => {
     document.getElementById('phone-modal').classList.remove('hidden');

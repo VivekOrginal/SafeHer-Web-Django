@@ -209,7 +209,8 @@ document.getElementById('current-number').textContent = emergencyNumber;
 
 // Permission request handler
 document.getElementById('request-permissions').onclick = function() {
-    // Force show permission modal
+    // Force show permission modal and reset seen flag
+    localStorage.removeItem('permissionModalSeen');
     document.getElementById('permission-modal').style.display = 'flex';
 };
 

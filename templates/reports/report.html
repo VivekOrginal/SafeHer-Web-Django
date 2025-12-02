@@ -15,7 +15,7 @@
 <div class="max-w-lg mx-auto bg-white/90 backdrop-blur-sm p-8 rounded-3xl shadow-2xl safe-glow border border-purple-100">
     <!-- Video Container -->
     <div id="video-container" class="mb-6 relative">
-        <video id="video" width="100%" height="250" autoplay muted playsinline webkit-playsinline class="rounded-2xl border-4 border-purple-200 shadow-lg"></video>
+        <video id="video" width="100%" height="250" autoplay muted playsinline webkit-playsinline preload="none" class="rounded-2xl border-4 border-purple-200 shadow-lg"></video>
         <canvas id="canvas" style="display:none;"></canvas>
         <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-purple-600">
             <i class="fas fa-video mr-1"></i>Live
@@ -243,24 +243,49 @@ function requestCamera() {
         return;
     }
     
-    // Enhanced constraints for better Android compatibility
+    // Show loading immediately
+    document.getElementById('status').innerHTML = '<div class="text-blue-600">📹 Starting camera...</div>';
+    
+    // Fast constraints for mobile
     const constraints = {
         video: {
-            facingMode: { ideal: 'environment' },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
+            facingMode: 'environment',
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
         },
         audio: true
     };
     
     navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
-            document.getElementById('video').srcObject = stream;
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play(); // Force play for faster preview
             document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Camera ready! Tap START RECORDING.</div>';
             setupRecording(stream);
         })
         .catch(error => {
             console.error('Camera error:', error);
+            // Try fallback with lower quality
+            tryFallbackCamera();
+        });
+}
+
+function tryFallbackCamera() {
+    const basicConstraints = {
+        video: true,
+        audio: true
+    };
+    
+    navigator.mediaDevices.getUserMedia(basicConstraints)
+        .then(stream => {
+            const video = document.getElementById('video');
+            video.srcObject = stream;
+            video.play();
+            document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Camera ready! Tap START RECORDING.</div>';
+            setupRecording(stream);
+        })
+        .catch(error => {
             showCameraHelp();
         });
 }
@@ -339,39 +364,24 @@ function setupRecording(stream) {
     };
 }
 
-// Enhanced initialization for modern Android
-async function initializeApp() {
-    // Show initial loading
-    document.getElementById('status').innerHTML = '<div class="text-blue-600">🔄 Requesting permissions...</div>';
+// Fast camera initialization
+function initializeApp() {
+    // Start camera immediately without waiting
+    requestCameraPermission();
     
-    // Add user interaction requirement for modern browsers
-    document.addEventListener('click', handleFirstInteraction, { once: true });
-    document.addEventListener('touchstart', handleFirstInteraction, { once: true });
-    
-    // Try immediate initialization
-    setTimeout(tryInitialization, 1000);
+    // Request location in parallel
+    getCurrentLocation().catch(() => {});
 }
 
-function handleFirstInteraction() {
-    tryInitialization();
-}
-
-function tryInitialization() {
-    // Request location first
-    getCurrentLocation()
-        .then(() => {
-            // Then request camera
-            requestCameraPermission();
-        })
-        .catch(error => {
-            console.error('Initialization failed:', error);
-            // Show help but don't block camera request
-            requestCameraPermission();
-        });
-}
-
-// Initialize on page load
+// Initialize immediately on page load
 initializeApp();
+
+// Also try on first user interaction
+document.addEventListener('click', () => {
+    if (!document.getElementById('video').srcObject) {
+        requestCameraPermission();
+    }
+}, { once: true });
 
 // Show manual location button if auto-request fails
 setTimeout(() => {

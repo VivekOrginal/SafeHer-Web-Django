@@ -100,10 +100,12 @@
         let permissionModal = document.getElementById('permission-modal');
         let permissionsGranted = false;
         
-        // Show modal immediately on page load
+        // Show modal only once per session
         setTimeout(() => {
-            if (!permissionsGranted) {
+            const hasSeenModal = localStorage.getItem('permissionModalSeen');
+            if (!permissionsGranted && !hasSeenModal) {
                 permissionModal.style.display = 'flex';
+                localStorage.setItem('permissionModalSeen', 'true');
             }
         }, 2000);
         

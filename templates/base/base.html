@@ -85,6 +85,11 @@
             </div>
         </div>
     </footer>
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top" class="fixed bottom-6 right-6 bg-gradient-to-r from-pink-500 to-rose-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 z-40" style="display: none;">
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+
     <!-- Permission Request Modal -->
     <div id="permission-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" style="display: none;">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center">
@@ -184,6 +189,21 @@
                 }
             }).catch(() => {});
         }
+        
+        // Scroll to top functionality
+        const scrollTopBtn = document.getElementById('scroll-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.style.display = 'block';
+            } else {
+                scrollTopBtn.style.display = 'none';
+            }
+        });
+        
+        scrollTopBtn.onclick = () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
     </script>
 </body>
 </html>

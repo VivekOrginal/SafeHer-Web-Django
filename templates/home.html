@@ -207,6 +207,11 @@
 let emergencyNumber = localStorage.getItem('emergencyNumber') || '';
 document.getElementById('current-number').textContent = emergencyNumber;
 
+// Show emergency number modal immediately if not set
+if (!emergencyNumber) {
+    document.getElementById('phone-modal').classList.remove('hidden');
+}
+
 // Permission request handler
 document.getElementById('request-permissions').onclick = function() {
     // Force show permission modal and reset seen flag
@@ -244,7 +249,7 @@ document.getElementById('save-number').onclick = () => {
         localStorage.setItem('emergencyNumber', emergencyNumber);
         document.getElementById('current-number').textContent = emergencyNumber;
         document.getElementById('phone-modal').classList.add('hidden');
-        showCustomNotification('Emergency number updated successfully!', 'success');
+        showCustomNotification('Emergency number saved successfully!', 'success');
     } else {
         showCustomNotification('Please enter a valid number (3-15 digits)!', 'error');
     }

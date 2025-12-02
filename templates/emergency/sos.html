@@ -161,8 +161,13 @@ function getLocationForSOS() {
 }
 
 function sendEmergencySMS(location) {
-    // Get emergency number from localStorage or use default
-    const emergencyNumber = localStorage.getItem('emergencyNumber') || '100';
+    // Get emergency number from user settings
+    const emergencyNumber = localStorage.getItem('emergencyNumber');
+    
+    if (!emergencyNumber) {
+        alert('Please set your emergency number first!');
+        return;
+    }
     
     let message;
     if (location) {

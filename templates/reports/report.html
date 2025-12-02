@@ -20,6 +20,9 @@
         <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-purple-600">
             <i class="fas fa-video mr-1"></i>Live
         </div>
+        <button id="switch-camera" class="absolute top-4 left-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-purple-600 hover:bg-white transition-all">
+            <i class="fas fa-sync-alt"></i>
+        </button>
     </div>
     
     <!-- Action Buttons -->
@@ -105,6 +108,8 @@
 let mediaRecorder;
 let recordedChunks = [];
 let currentLocation = null;
+let currentStream = null;
+let currentFacingMode = 'environment'; // Start with back camera
 
 // Enhanced location access for modern Android
 function getCurrentLocation() {
@@ -249,7 +254,7 @@ function requestCamera() {
     // Fast constraints for mobile
     const constraints = {
         video: {
-            facingMode: 'environment',
+            facingMode: currentFacingMode,
             width: { ideal: 1920 },
             height: { ideal: 1080 }
         },
@@ -258,6 +263,7 @@ function requestCamera() {
     
     navigator.mediaDevices.getUserMedia(constraints)
         .then(stream => {
+            currentStream = stream;
             const video = document.getElementById('video');
             video.srcObject = stream;
             video.play(); // Force play for faster preview
@@ -279,6 +285,7 @@ function tryFallbackCamera() {
     
     navigator.mediaDevices.getUserMedia(basicConstraints)
         .then(stream => {
+            currentStream = stream;
             const video = document.getElementById('video');
             video.srcObject = stream;
             video.play();
@@ -376,6 +383,20 @@ function initializeApp() {
 // Initialize immediately on page load
 initializeApp();
 
+// Camera switch functionality
+document.getElementById('switch-camera').onclick = () => {
+    // Stop current stream
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+    }
+    
+    // Switch facing mode
+    currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+    
+    // Restart camera with new facing mode
+    requestCameraPermission();
+};
+
 // Also try on first user interaction
 document.addEventListener('click', () => {
     if (!document.getElementById('video').srcObject) {
@@ -441,7 +462,7 @@ document.getElementById('submit-report').onclick = async () => {
     .then(data => {
         if (data.success) {
             document.getElementById('status').innerHTML = 
-                `<div class="bg-green-100 border border-green-300 p-4 rounded-2xl"><div class="flex items-center space-x-2 text-green-700"><i class="fas fa-shield-check text-xl"></i><div><p class="font-bold">Report Submitted Successfully!</p><p class="text-sm">SMS sent to 9037612009 with your location!</p><p class="text-sm">Nearest Police: ${data.police_station}</p><p class="text-xs mt-1">You're safe now. Help is on the way.</p></div></div></div>`;
+                `<div class="bg-green-100 border border-green-300 p-4 rounded-2xl"><div class="flex items-center space-x-2 text-green-700"><i class="fas fa-shield-check text-xl"></i><div><p class="font-bold">Report Submitted Successfully!</p><p class="text-sm">SMS sent with your location!</p><p class="text-sm">Nearest Police: ${data.police_station}</p><p class="text-xs mt-1">You're safe now. Help is on the way.</p></div></div></div>`;
             
             // Show AI detection if harassment detected
             if (Math.random() > 0.5) { // Mock AI detection
@@ -460,8 +481,13 @@ function sendAutomaticSMS(location, description) {
         return;
     }
     
-    // Get custom emergency number or use default
-    const emergencyNumber = localStorage.getItem('emergencyNumber') || '9037612009';
+    // Get emergency number from user settings
+    const emergencyNumber = localStorage.getItem('emergencyNumber');
+    
+    if (!emergencyNumber) {
+        alert('Please set your emergency number first!');
+        return;
+    }
     
     // Create Google Maps link
     const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
@@ -538,8 +564,13 @@ document.getElementById('share-whatsapp').onclick = () => {
 };
 
 function shareOnWhatsApp(location, description) {
-    // Get custom emergency number or use default
-    const emergencyNumber = localStorage.getItem('emergencyNumber') || '9037612009';
+    // Get emergency number from user settings
+    const emergencyNumber = localStorage.getItem('emergencyNumber');
+    
+    if (!emergencyNumber) {
+        alert('Please set your emergency number first!');
+        return;
+    }
     
     // Create Google Maps link
     const mapLink = `https://maps.google.com/?q=${location.latitude},${location.longitude}`;
@@ -586,12 +617,7 @@ function openWhatsAppWithMessage(message, phoneNumber) {
     const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
     // Open WhatsApp
-    window.open(whatsappURL, '_blank');
-    
-    // Also try WhatsApp app URL for mobile
-    setTimeout(() => {
-        window.location.href = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-    }, 1000);
+    window.location.href = whatsappURL;
     
     // Show instructions for video sharing
     document.getElementById('status').innerHTML = `

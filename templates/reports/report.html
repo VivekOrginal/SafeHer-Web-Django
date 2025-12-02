@@ -251,17 +251,18 @@ function requestCamera() {
     // Show loading immediately
     document.getElementById('status').innerHTML = '<div class="text-blue-600">📹 Starting camera...</div>';
     
-    // Optimized constraints for smooth video
+    // Smooth 720p constraints for better performance
     const constraints = {
         video: {
             facingMode: currentFacingMode,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-            frameRate: { ideal: 30, max: 30 }
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 24, max: 24 }
         },
         audio: {
-            echoCancellation: true,
-            noiseSuppression: true
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
         }
     };
     
@@ -272,7 +273,14 @@ function requestCamera() {
             video.srcObject = stream;
             video.setAttribute('playsinline', true);
             video.setAttribute('webkit-playsinline', true);
+            video.setAttribute('controls', false);
             video.muted = true;
+            video.autoplay = true;
+            
+            // Optimize video element for smooth playback
+            video.style.transform = 'translateZ(0)';
+            video.style.backfaceVisibility = 'hidden';
+            
             video.play(); // Force play for faster preview
             document.getElementById('status').innerHTML = '<div class="text-green-600">✅ Camera ready! Tap START RECORDING.</div>';
             setupRecording(stream);
@@ -286,8 +294,12 @@ function requestCamera() {
 
 function tryFallbackCamera() {
     const basicConstraints = {
-        video: true,
-        audio: true
+        video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 24 }
+        },
+        audio: false
     };
     
     navigator.mediaDevices.getUserMedia(basicConstraints)

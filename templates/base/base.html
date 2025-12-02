@@ -40,9 +40,6 @@
                 <a href="/guide/" class="bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full hover:shadow-lg transition-all font-medium text-sm sm:text-sm">
                     <i class="fas fa-question-circle mr-1"></i><span class="hidden sm:inline">Guide</span>
                 </a>
-                <button id="shake-settings" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-full hover:shadow-lg transition-all font-medium text-sm sm:text-sm">
-                    <i class="fas fa-mobile-alt mr-1"></i><span class="hidden sm:inline">Shake</span>
-                </button>
             </div>
         </div>
     </nav>
@@ -98,38 +95,6 @@
                 Enable Now
             </button>
             <p class="text-xs text-gray-500">Tap "Allow" when browser asks for permissions</p>
-        </div>
-    </div>
-
-    <!-- Shake Settings Modal -->
-    <div id="shake-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" style="display: none;">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center">
-            <div class="text-4xl mb-4">📱</div>
-            <h3 class="text-xl font-bold text-gray-800 mb-3">Shake to SOS Settings</h3>
-            <p class="text-gray-600 mb-4 text-sm">Set shake sensitivity to trigger emergency SOS</p>
-            
-            <div class="space-y-3 mb-6">
-                <button class="shake-option w-full p-3 border-2 rounded-xl transition-all" data-sensitivity="soft">
-                    <div class="font-bold text-green-600">Soft</div>
-                    <div class="text-xs text-gray-600">Light shake triggers SOS</div>
-                </button>
-                <button class="shake-option w-full p-3 border-2 rounded-xl transition-all" data-sensitivity="medium">
-                    <div class="font-bold text-orange-600">Medium</div>
-                    <div class="text-xs text-gray-600">Moderate shake triggers SOS</div>
-                </button>
-                <button class="shake-option w-full p-3 border-2 rounded-xl transition-all" data-sensitivity="hard">
-                    <div class="font-bold text-red-600">Hard</div>
-                    <div class="text-xs text-gray-600">Strong shake triggers SOS</div>
-                </button>
-                <button class="shake-option w-full p-3 border-2 rounded-xl transition-all" data-sensitivity="off">
-                    <div class="font-bold text-gray-600">Off</div>
-                    <div class="text-xs text-gray-600">Disable shake detection</div>
-                </button>
-            </div>
-            
-            <button id="close-shake-modal" class="w-full bg-gray-500 text-white py-3 rounded-xl font-bold">
-                Close
-            </button>
         </div>
     </div>
 
@@ -218,83 +183,6 @@
                     permissionModal.style.display = 'none';
                 }
             }).catch(() => {});
-        }
-        
-        // Shake Detection System
-        let shakeSensitivity = localStorage.getItem('shakeSensitivity') || 'medium';
-        let shakeThresholds = {
-            soft: 8,
-            medium: 15,
-            hard: 25,
-            off: 999
-        };
-        let lastShakeTime = 0;
-        let shakeCount = 0;
-        
-        // Initialize accelerometer
-        if (window.DeviceMotionEvent) {
-            window.addEventListener('devicemotion', handleShake);
-        }
-        
-        function handleShake(event) {
-            if (shakeSensitivity === 'off') return;
-            
-            const acceleration = event.accelerationIncludingGravity;
-            const threshold = shakeThresholds[shakeSensitivity];
-            const now = Date.now();
-            
-            if (acceleration) {
-                const totalAcceleration = Math.abs(acceleration.x) + Math.abs(acceleration.y) + Math.abs(acceleration.z);
-                
-                if (totalAcceleration > threshold) {
-                    if (now - lastShakeTime > 1000) {
-                        shakeCount = 0;
-                    }
-                    
-                    shakeCount++;
-                    lastShakeTime = now;
-                    
-                    if (shakeCount >= 3) {
-                        triggerShakeSOS();
-                        shakeCount = 0;
-                    }
-                }
-            }
-        }
-        
-        function triggerShakeSOS() {
-            // Redirect to SOS page and trigger SOS
-            window.location.href = '/sos/?shake=true';
-        }
-        
-        // Shake settings modal
-        document.getElementById('shake-settings').onclick = () => {
-            document.getElementById('shake-modal').style.display = 'flex';
-            updateShakeOptions();
-        };
-        
-        document.getElementById('close-shake-modal').onclick = () => {
-            document.getElementById('shake-modal').style.display = 'none';
-        };
-        
-        // Shake option selection
-        document.querySelectorAll('.shake-option').forEach(option => {
-            option.onclick = () => {
-                shakeSensitivity = option.dataset.sensitivity;
-                localStorage.setItem('shakeSensitivity', shakeSensitivity);
-                updateShakeOptions();
-            };
-        });
-        
-        function updateShakeOptions() {
-            document.querySelectorAll('.shake-option').forEach(option => {
-                if (option.dataset.sensitivity === shakeSensitivity) {
-                    option.classList.add('border-blue-500', 'bg-blue-50');
-                } else {
-                    option.classList.remove('border-blue-500', 'bg-blue-50');
-                    option.classList.add('border-gray-200');
-                }
-            });
         }
     </script>
 </body>

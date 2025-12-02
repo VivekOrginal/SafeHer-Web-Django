@@ -207,10 +207,7 @@
 let emergencyNumber = localStorage.getItem('emergencyNumber') || '';
 document.getElementById('current-number').textContent = emergencyNumber;
 
-// Show emergency number modal immediately if not set
-if (!emergencyNumber) {
-    document.getElementById('phone-modal').classList.remove('hidden');
-}
+// Emergency number modal will be shown by base template after permissions
 
 // Permission request handler
 document.getElementById('request-permissions').onclick = function() {

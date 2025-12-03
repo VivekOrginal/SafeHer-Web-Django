@@ -473,16 +473,16 @@ function displayPoliceStations(places) {
     const policeList = document.getElementById('police-list');
     policeList.innerHTML = '';
     
-    places.forEach(place => {
+    places.forEach((place, index) => {
         policeList.innerHTML += `
-            <div class="bg-white p-3 rounded-xl border border-blue-200 hover:shadow-md transition-all cursor-pointer" onclick="openInMaps('${place.place_id}')">
+            <div class="bg-white p-3 rounded-xl border border-blue-200 hover:shadow-md transition-all cursor-pointer" onclick="getDirections('${place.lat}', '${place.lng}')">
                 <div class="flex justify-between items-start">
                     <div>
                         <h4 class="font-bold text-blue-800 text-sm">${place.name}</h4>
                         <p class="text-xs text-blue-600">${place.vicinity}</p>
                         <p class="text-xs text-blue-500 font-medium">${place.distance} km away</p>
                     </div>
-                    <button onclick="getDirections(${place.lat}, ${place.lng})" class="text-blue-500 hover:text-blue-700">
+                    <button onclick="event.stopPropagation(); getDirections('${place.lat}', '${place.lng}')" class="text-blue-500 hover:text-blue-700">
                         <i class="fas fa-directions text-sm"></i>
                     </button>
                 </div>
@@ -495,9 +495,9 @@ function displayHospitals(places) {
     const hospitalList = document.getElementById('hospital-list');
     hospitalList.innerHTML = '';
     
-    places.forEach(place => {
+    places.forEach((place, index) => {
         hospitalList.innerHTML += `
-            <div class="bg-white p-3 rounded-xl border border-red-200 hover:shadow-md transition-all cursor-pointer" onclick="openInMaps('${place.place_id}')">
+            <div class="bg-white p-3 rounded-xl border border-red-200 hover:shadow-md transition-all cursor-pointer" onclick="getDirections('${place.lat}', '${place.lng}')">
                 <div class="flex justify-between items-start">
                     <div>
                         <h4 class="font-bold text-red-800 text-sm">${place.name}</h4>
@@ -505,7 +505,7 @@ function displayHospitals(places) {
                         <p class="text-xs text-red-500 font-medium">${place.distance} km away</p>
                         ${place.emergency ? `<p class="text-xs text-red-700 font-bold">${place.emergency}</p>` : ''}
                     </div>
-                    <button onclick="getDirections(${place.lat}, ${place.lng})" class="text-red-500 hover:text-red-700">
+                    <button onclick="event.stopPropagation(); getDirections('${place.lat}', '${place.lng}')" class="text-red-500 hover:text-red-700">
                         <i class="fas fa-directions text-sm"></i>
                     </button>
                 </div>
@@ -521,7 +521,7 @@ function displaySafePlaces(places, type) {
         const typeIcon = place.type === 'pharmacy' ? 'fas fa-pills' : place.type === 'fuel' ? 'fas fa-gas-pump' : 'fas fa-store';
         
         safePlacesList.innerHTML += `
-            <div class="bg-white p-3 rounded-xl border border-green-200 hover:shadow-md transition-all cursor-pointer" onclick="openInMaps('${place.place_id}')">
+            <div class="bg-white p-3 rounded-xl border border-green-200 hover:shadow-md transition-all cursor-pointer" onclick="getDirections('${place.lat}', '${place.lng}')">
                 <div class="flex justify-between items-start">
                     <div>
                         <h4 class="font-bold text-green-800 text-sm flex items-center">
@@ -531,7 +531,7 @@ function displaySafePlaces(places, type) {
                         <p class="text-xs text-green-600">${place.vicinity}</p>
                         <p class="text-xs text-green-500 font-medium">${place.distance} km away</p>
                     </div>
-                    <button onclick="getDirections(${place.lat}, ${place.lng})" class="text-green-500 hover:text-green-700">
+                    <button onclick="event.stopPropagation(); getDirections('${place.lat}', '${place.lng}')" class="text-green-500 hover:text-green-700">
                         <i class="fas fa-directions text-sm"></i>
                     </button>
                 </div>
@@ -562,13 +562,23 @@ function calculateDistance(pos1, pos2) {
     return (R * c).toFixed(1);
 }
 
-function openInMaps(lat, lng) {
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
-    window.open(url, '_blank');
-}
-
 function getDirections(lat, lng) {
-    const url = `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${lat},${lng}`;
+    if (!userLocation) {
+        alert('Please allow location access first!');
+        return;
+    }
+    
+    // Convert to numbers to ensure proper coordinates
+    const destLat = parseFloat(lat);
+    const destLng = parseFloat(lng);
+    const userLat = parseFloat(userLocation.lat);
+    const userLng = parseFloat(userLocation.lng);
+    
+    console.log('User location:', userLat, userLng);
+    console.log('Destination:', destLat, destLng);
+    
+    // Use Google Maps directions with proper coordinates
+    const url = `https://www.google.com/maps/dir/${userLat},${userLng}/${destLat},${destLng}`;
     window.open(url, '_blank');
 }
 

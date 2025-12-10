@@ -1,0 +1,15 @@
+DATABASE REMOVED FOR PROTECTION
+
+Developer: Vivek P S
+Email: viveksubhash4@gmail.com
+
+The database file has been removed to protect the backend implementation.
+This demo version only contains UI components.
+
+To get the full working version with:
+- Complete database schema
+- User authentication
+- Data storage
+- API functionality
+
+Contact: viveksubhash4@gmail.com

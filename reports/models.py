@@ -1,23 +1,15 @@
-from django.db import models
-from django.contrib.auth import get_user_model
+"""
+SafeHer Reports Models - DEMO VERSION
+Developer: Vivek P S
+Email: viveksubhash4@gmail.com
 
-User = get_user_model()
+Models removed for protection.
+Purchase full project for complete database schema.
+"""
 
-class IncidentReport(models.Model):
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('investigating', 'Investigating'),
-        ('resolved', 'Resolved'),
-    ]
-    
-    reporter = models.ForeignKey(User, on_delete=models.CASCADE)
-    video_file = models.FileField(upload_to='incident_videos/')
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    description = models.TextField(blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    police_station = models.ForeignKey('users.PoliceStation', on_delete=models.SET_NULL, null=True)
-    
-    def __str__(self):
-        return f"Report {self.id} - {self.timestamp}"
+# Demo version - Models disabled
+# Contact viveksubhash4@gmail.com to purchase full version
+
+class DemoModel:
+    """Demo placeholder - Purchase full version for real models"""
+    pass

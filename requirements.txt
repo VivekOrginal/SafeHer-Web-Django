@@ -1,9 +1,10 @@
-Django==4.2.7
-djangorestframework==3.14.0
-Pillow==10.0.1
-django-cors-headers==4.3.1
-requests==2.31.0
-geopy==2.4.0
-twilio==8.10.0
-opencv-python==4.8.1.78
-face-recognition==1.3.0
+# SafeHer Demo - Requirements Removed
+# Developer: Vivek P S
+# Email: viveksubhash4@gmail.com
+#
+# This is a demo version with UI only.
+# Backend dependencies removed for protection.
+# Purchase full project for complete requirements.txt
+
+# Demo only needs basic Python - no Django required
+# Contact viveksubhash4@gmail.com for full version

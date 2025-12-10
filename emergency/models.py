@@ -1,21 +1,15 @@
-from django.db import models
-from django.contrib.auth import get_user_model
+"""
+SafeHer Emergency Models - DEMO VERSION
+Developer: Vivek P S
+Email: viveksubhash4@gmail.com
 
-User = get_user_model()
+Models removed for protection.
+Purchase full project for complete database schema.
+"""
 
-class SOSAlert(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-    audio_file = models.FileField(upload_to='sos_audio/', blank=True)
-    
-    def __str__(self):
-        return f"SOS Alert {self.id} - {self.user.username}"
+# Demo version - Models disabled
+# Contact viveksubhash4@gmail.com to purchase full version
 
-class LiveTracking(models.Model):
-    sos_alert = models.ForeignKey(SOSAlert, on_delete=models.CASCADE)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+class DemoModel:
+    """Demo placeholder - Purchase full version for real models"""
+    pass

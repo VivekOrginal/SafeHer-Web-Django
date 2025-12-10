@@ -1,0 +1,21 @@
+===============================================
+SafeHer - Women Safety Platform (DEMO VERSION)
+===============================================
+
+Developer: Vivek P S
+Email: viveksubhash4@gmail.com
+
+IMPORTANT NOTICE:
+This is a DEMO version containing only the UI components.
+All backend functionality has been removed for protection.
+
+To get the full working version with:
+- Complete Django backend
+- Database functionality
+- API endpoints
+- Security features
+- Full source code
+
+Please contact the developer at: viveksubhash4@gmail.com
+
+===============================================

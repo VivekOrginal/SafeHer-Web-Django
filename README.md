@@ -260,6 +260,29 @@ Navigate to `templates` folder and open `loading.html` in your browser.
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Emergency SOS
+![Emergency SOS](screenshots/sos.png)
+
+### Incident Reporting
+![Report Incident](screenshots/report.png)
+
+### Safety Guide
+![Safety Guide](screenshots/guide.png)
+
+### Nearby Help Centers
+![Nearby Help](screenshots/nearby-help.png)
+
+</div>
+
+---
+
 ## 📄 License
 
 **Proprietary License**
@@ -297,6 +320,16 @@ Interested in the complete working project?
 - ✅ Technical support
 - ✅ Future updates
 - ✅ Customization options
+
+**Payment Methods:**
+
+<div align="center">
+
+![Google Pay QR](screenshots/payment-qr.png)
+
+*Scan to pay via Google Pay/UPI*
+
+</div>
 
 **Contact:** viveksubhash4@gmail.com
 
